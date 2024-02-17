@@ -5,9 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:MyCompiler"
+        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Background="Black">
+        Title="MyCompiler" Height="600" Width="1000">
+    <Grid Background="DimGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -24,7 +26,6 @@
         <ToolBarTray Background="DimGray" Grid.Row="1">
             <ToolBar Background="DimGray">
                 <ToolBar.Resources>
-                    <!-- Задаем стиль для PackIcon -->
                     <Style TargetType="materialDesign:PackIcon">
                         <Setter Property="Foreground" Value="White"/>
                     </Style>
@@ -48,31 +49,31 @@
                     <materialDesign:PackIcon Kind="ContentSave" />
                 </Button>
                 <Separator/>
-                <Button x:Name="undoButton" Padding="5" Click="undoButton_Click" IsEnabled="False">
+                <Button x:Name="undoButton" Padding="5" IsEnabled="False">
                     <Button.ToolTip>
                         <ToolTip Content="Отменить" />
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="ArrowBack" />
                 </Button>
-                <Button x:Name="redoButton" Padding="5" Click="redoButton_Click" IsEnabled="False">
+                <Button x:Name="redoButton" Padding="5" IsEnabled="False">
                     <Button.ToolTip>
                         <ToolTip Content="Повторить" />
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="ArrowForward" />
                 </Button>
-                <Button Padding="5" Click="CopySelectedText">
+                <Button Padding="5">
                     <Button.ToolTip>
                         <ToolTip Content="Копировать" />
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="ContentCopy" />
                 </Button>
-                <Button Padding="5" Click="CutSelectedText">
+                <Button Padding="5" >
                     <Button.ToolTip>
                         <ToolTip Content="Вырезать" />
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="ContentCut" />
                 </Button>
-                <Button Padding="5" Click="PasteText">
+                <Button Padding="5">
                     <Button.ToolTip>
                         <ToolTip Content="Вставить" />
                     </Button.ToolTip>
@@ -100,5 +101,15 @@
             </ToolBar>
         </ToolBarTray>
 
+        <avalonedit:TextEditor Grid.Row="2" Foreground="White" Name="textEditor" Margin="5" Background="Black" FontSize="16"
+               VerticalScrollBarVisibility="Auto" BorderThickness="0" Padding="0,0,0,0"
+               SyntaxHighlighting="C#" ShowLineNumbers="True" TextChanged="textEditor_TextChanged"
+               PreviewKeyDown="textEditor_PreviewKeyDown" MouseMove="textEditor_MouseMove">
+            <i:Interaction.Behaviors>
+                <local:AvalonEditBehaviour InputText="{Binding FileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </i:Interaction.Behaviors>
+        </avalonedit:TextEditor>
+
+        <TextBlock Grid.Row="5" x:Name="CursorPositionTextBlock" FontSize="16" Text="Строка: 1, Столбец: 1" Margin="0 0 5 5" HorizontalAlignment="Right"/>
     </Grid>
 </Window>
