@@ -3,10 +3,102 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:MyCompiler"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.6*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.4*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" FontSize="16" Background="DimGray" ItemContainerStyle="{StaticResource MenuItemStyle}">
+            
+        </Menu>
+
+        <ToolBarTray Background="DimGray" Grid.Row="1">
+            <ToolBar Background="DimGray">
+                <ToolBar.Resources>
+                    <!-- Задаем стиль для PackIcon -->
+                    <Style TargetType="materialDesign:PackIcon">
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                </ToolBar.Resources>
+                <Button Padding="5" Command="{Binding CreateNewFileCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Создать"/>
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="PlusBold" />
+                </Button>
+                <Button Padding="5" Command="{Binding OpenFileCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Открыть" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="FolderOpen" />
+                </Button>
+                <Button Padding="5" Command="{Binding SaveFileCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Сохранить" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ContentSave" />
+                </Button>
+                <Separator/>
+                <Button x:Name="undoButton" Padding="5" Click="undoButton_Click" IsEnabled="False">
+                    <Button.ToolTip>
+                        <ToolTip Content="Отменить" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ArrowBack" />
+                </Button>
+                <Button x:Name="redoButton" Padding="5" Click="redoButton_Click" IsEnabled="False">
+                    <Button.ToolTip>
+                        <ToolTip Content="Повторить" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ArrowForward" />
+                </Button>
+                <Button Padding="5" Click="CopySelectedText">
+                    <Button.ToolTip>
+                        <ToolTip Content="Копировать" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ContentCopy" />
+                </Button>
+                <Button Padding="5" Click="CutSelectedText">
+                    <Button.ToolTip>
+                        <ToolTip Content="Вырезать" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ContentCut" />
+                </Button>
+                <Button Padding="5" Click="PasteText">
+                    <Button.ToolTip>
+                        <ToolTip Content="Вставить" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ContentPaste" />
+                </Button>
+                <Button Padding="5">
+                    <Button.ToolTip>
+                        <ToolTip Content="Пуск" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="Play" />
+                </Button>
+                <Separator/>
+                <Button Padding="5" Command="{Binding HelpCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Вызов справки" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="QuestionMarkCircle" />
+                </Button>
+                <Button Padding="5" Command="{Binding AboutCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="О программе" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="AboutCircle" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
 
     </Grid>
 </Window>
