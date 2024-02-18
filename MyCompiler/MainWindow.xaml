@@ -211,6 +211,7 @@
             </i:Interaction.Behaviors>
 
         </avalonedit:TextEditor>
+        <GridSplitter Grid.Row="3" ShowsPreview="False" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
 
         <DataGrid x:Name="lexerDataGrid" FontSize="16" EnableRowVirtualization="False" Margin="5,10,5,26" SelectedItem="{Binding SelectedLexeme}" ItemsSource="{Binding Lexemes, Mode=OneWay}" 
                   AlternationCount="{Binding Lexemes.Count}" GridLinesVisibility="All" 
