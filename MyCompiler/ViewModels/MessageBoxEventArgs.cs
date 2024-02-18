@@ -11,7 +11,7 @@ public class MessageBoxEventArgs
 {
     public static MessageBoxResult ShowUnsavedChangesMessage()
     {
-        MessageBoxResult result = MessageBox.Show("Есть несохраненные изменения. Хотите сохранить их?", "Предупреждение",
+        MessageBoxResult result = MessageBox.Show("Не все изменения были сохранены. Хотите сохранить их?", "Предупреждение",
             MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
         return result;
@@ -19,7 +19,7 @@ public class MessageBoxEventArgs
 
     public static MessageBoxResult ShowWindowClosingMessage()
     {
-        MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите закрыть приложение? Несохраненные изменения будут потеряны!",
+        MessageBoxResult result = MessageBox.Show("Вы точно хотите выйти? Все несохранённые изменения будут утеряны",
             "Подтверждение закрытия", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
         return result;

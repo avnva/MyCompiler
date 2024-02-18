@@ -27,6 +27,8 @@ public partial class MainWindow : Window
         CompilerViewModel viewModel = new CompilerViewModel();
         viewModel.StringSent += OnStringReceived;
         DataContext = viewModel;
+
+        Closing += MainWindow_Closing;
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -49,6 +51,16 @@ public partial class MainWindow : Window
         
     }
 
+    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+        if (((CompilerViewModel)DataContext).IsFileModified)
+        {
+            if (MessageBoxEventArgs.ShowWindowClosingMessage() == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+        }
+    }
     public void OnStringReceived(object sender, MessageEventArgs e)
     {
         textEditor.Document.Text = e.Message;
@@ -59,8 +71,8 @@ public partial class MainWindow : Window
         undoButton.IsEnabled = textEditor.CanUndo;
         redoButton.IsEnabled = textEditor.CanRedo;
 
-        //undoMenuItem.IsEnabled = textEditor.CanUndo;
-        //redoMenuItem.IsEnabled = textEditor.CanRedo;
+        undoMenuItem.IsEnabled = textEditor.CanUndo;
+        redoMenuItem.IsEnabled = textEditor.CanRedo;
 
         GetCaretPosition();
     }
@@ -87,6 +99,19 @@ public partial class MainWindow : Window
         {
             textEditor.Document.Insert(textEditor.CaretOffset, Clipboard.GetText());
         }
+    }
+
+    private void DeleteSelectedText(object sender, RoutedEventArgs e)
+    {
+        if (textEditor.SelectionLength > 0)
+        {
+            textEditor.Document.Remove(textEditor.SelectionStart, textEditor.SelectionLength);
+        }
+    }
+
+    private void SelectAllText(object sender, RoutedEventArgs e)
+    {
+        textEditor.SelectAll();
     }
 
     private void textEditor_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

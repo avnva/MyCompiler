@@ -20,8 +20,95 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" FontSize="16" Background="DimGray" ItemContainerStyle="{StaticResource MenuItemStyle}">
-            
+        <Menu Grid.Row="0" Foreground="White" FontSize="14" Background="DimGray" 
+              ItemContainerStyle="{StaticResource MenuItemStyle}">
+            <MenuItem Background="DimGray"  Header="Файл">
+                <MenuItem Background="DimGray" Foreground="White" Header="Создать" Command="{Binding CreateNewFileCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="PlusBold"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Открыть" Command="{Binding OpenFileCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="FolderOpen"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Сохранить" Command="{Binding SaveFileCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentSave"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Сохранить как" Command="{Binding SaveAsFileCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentSaveAdd"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Выход" Command="{Binding ExitCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ExitToApp"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Background="DimGray"  Header="Правка">
+                <MenuItem Background="DimGray" Foreground="White" x:Name="undoMenuItem" Header="Отменить" Click="undoButton_Click" IsEnabled="False">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ArrowBack"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" x:Name="redoMenuItem" Header="Повторить" Click="redoButton_Click" IsEnabled="False">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ArrowForward"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Вырезать" Click="CutText">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentCut"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Копировать" Click="CopyText">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentCopy"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Вставить" Click="PasteText">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentPaste"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Удалить" Click="DeleteSelectedText">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Delete"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Выделиить все" Click="SelectAllText">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="SelectAll"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Background="DimGray" Header="Текст">
+                <MenuItem Background="DimGray" Foreground="White" Header="Постановка задачи"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Грамматика"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Классификация грамматики"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Метод анализа"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Диагностика и нейтрализация ошибок"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Тестовый пример" Command="{Binding OpenTestCaseCommand}"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Список литературы"/>
+                <MenuItem Background="DimGray" Foreground="White" Header="Исходный код программы"/>
+            </MenuItem>
+            <MenuItem Background="DimGray" Foreground="White" Header="Пуск" Command="{Binding StartAnalyzersCommand}"/>
+            <MenuItem Background="DimGray" Header="Справка">
+                <MenuItem Background="DimGray" Foreground="White" Header="Вызов справки" Command="{Binding HelpCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="QuestionMarkCircle"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="О программе" Command="{Binding AboutCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="AboutCircle"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
         <ToolBarTray Background="DimGray" Grid.Row="1">
@@ -102,16 +189,31 @@
             </ToolBar>
         </ToolBarTray>
 
-        <avalonedit:TextEditor Grid.Row="2" Foreground="White" Name="textEditor" Margin="5" Background="Black" FontSize="16"
+        <avalonedit:TextEditor Grid.Row="2" Foreground="White" 
+                               Name="textEditor" Margin="5" Background="Black" FontSize="16"
                VerticalScrollBarVisibility="Auto" BorderThickness="0" Padding="0,0,0,0"
                SyntaxHighlighting="Python" ShowLineNumbers="True" TextChanged="textEditor_TextChanged"
                PreviewKeyDown="textEditor_PreviewKeyDown" MouseMove="textEditor_MouseMove">
+            <avalonedit:TextEditor.Resources>
+                <Style TargetType="ScrollBar">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </avalonedit:TextEditor.Resources>
             <i:Interaction.Behaviors>
                 <local:AvalonEditBehaviour InputText="{Binding FileContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
 
         </avalonedit:TextEditor>
 
+        <DataGrid x:Name="lexerDataGrid" FontSize="16" EnableRowVirtualization="False" Margin="5,10,5,26" SelectedItem="{Binding SelectedLexeme}" ItemsSource="{Binding Lexemes, Mode=OneWay}" 
+                  AlternationCount="{Binding Lexemes.Count}" GridLinesVisibility="All" 
+                  Background="Black" AutoGenerateColumns="False" 
+                  BorderBrush="Gray" Grid.Row="4" Grid.RowSpan="2">
+
+        </DataGrid>
+
         <TextBlock Foreground="White" Grid.Row="5" x:Name="CursorPositionTextBlock" FontSize="16" Text="Строка: 1, Столбец: 1" Margin="0 0 5 5" HorizontalAlignment="Right"/>
+
     </Grid>
 </Window>

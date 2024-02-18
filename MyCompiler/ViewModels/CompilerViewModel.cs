@@ -16,8 +16,10 @@ public class CompilerViewModel : ViewModelBase
     private RelayCommand _openFileCommand;
     private RelayCommand _saveFileCommand;
     private RelayCommand _saveAsFileCommand;
+    private RelayCommand _exitCommand;
 
     public event EventHandler<MessageEventArgs> StringSent;
+    public event EventHandler RequestClose;
 
     public string FileContent
     {
@@ -54,7 +56,7 @@ public class CompilerViewModel : ViewModelBase
 
     public string WindowTitle
     {
-        get => $"Компилятор — {((CurrentFilePath == string.Empty) ? "Новый файл.txt" : "")}{_currentFilePath.Split(@"\").Last()}{(IsFileModified ? "*" : "")} {((CurrentFilePath != string.Empty) ? "(" : "")}{_currentFilePath}{((CurrentFilePath != string.Empty) ? ")" : "")}";
+        get => $"MyCompiler — {((CurrentFilePath == string.Empty) ? "Новый файл.txt" : "")}{_currentFilePath.Split(@"\").Last()}{(IsFileModified ? "*" : "")} {((CurrentFilePath != string.Empty) ? "(" : "")}{_currentFilePath}{((CurrentFilePath != string.Empty) ? ")" : "")}";
     }
 
     public CompilerViewModel()
@@ -85,6 +87,10 @@ public class CompilerViewModel : ViewModelBase
         get => _saveAsFileCommand ??= new RelayCommand(SaveAsFile);
     }
 
+    public RelayCommand ExitCommand
+    {
+        get => _exitCommand ??= new RelayCommand(Exit);
+    }
 
     public void CreateNewFile(object obj)
     {
@@ -135,6 +141,28 @@ public class CompilerViewModel : ViewModelBase
             IsFileModified = false;
         }
     }
+    public void Exit(object obj = null)
+    {
+        if (CancelOperationAfterCheckingForUnsavedChanges())
+            return;
+
+        OnRequestClose();
+    }
+
+    private void OnRequestClose()
+    {
+        // Получаем текущее приложение
+        var currentApplication = Application.Current as App;
+
+        // Проверяем, чтобы быть уверенными, что мы не пытаемся закрыть null
+        if (currentApplication != null)
+        {
+            // Закрываем приложение
+            currentApplication.Shutdown();
+        }
+
+        //RequestClose?.Invoke(this, EventArgs.Empty);
+    }
     public void SendString(string message)
     {
         if (StringSent != null)
@@ -153,6 +181,8 @@ public class CompilerViewModel : ViewModelBase
             {
                 case MessageBoxResult.Yes:
                     SaveFile();
+                    return false;
+                case MessageBoxResult.No:
                     return false;
                 case MessageBoxResult.Cancel:
                     return true;
