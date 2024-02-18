@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DeepBlack.xshd" />
+    <None Remove="Python.xshd" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="DeepBlack.xshd">
+    <Content Include="Resources\Python.xshd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

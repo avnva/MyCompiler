@@ -12,10 +12,15 @@ public class CompilerViewModel : ViewModelBase
     private string _fileContent;
     private bool _isFileModified;
 
+    private const string _aboutPath = @"Resources\About.html";
+    private const string _helpPath = @"Resources\Help.html";
+
     private RelayCommand _createNewFileCommand;
     private RelayCommand _openFileCommand;
     private RelayCommand _saveFileCommand;
     private RelayCommand _saveAsFileCommand;
+    private RelayCommand _aboutCommand;
+    private RelayCommand _helpCommand;
     private RelayCommand _exitCommand;
 
     public event EventHandler<MessageEventArgs> StringSent;
@@ -90,6 +95,15 @@ public class CompilerViewModel : ViewModelBase
     public RelayCommand ExitCommand
     {
         get => _exitCommand ??= new RelayCommand(Exit);
+    }
+    public RelayCommand AboutCommand
+    {
+        get => _aboutCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_aboutPath));
+    }
+
+    public RelayCommand HelpCommand
+    {
+        get => _helpCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_helpPath));
     }
 
     public void CreateNewFile(object obj)

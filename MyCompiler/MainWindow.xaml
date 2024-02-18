@@ -80,7 +80,7 @@
                         <materialDesign:PackIcon Kind="Delete"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Background="DimGray" Foreground="White" Header="Выделиить все" Click="SelectAllText">
+                <MenuItem Background="DimGray" Foreground="White" Header="Выделить все" Click="SelectAllText">
                     <MenuItem.Icon>
                         <materialDesign:PackIcon Kind="SelectAll"/>
                     </MenuItem.Icon>

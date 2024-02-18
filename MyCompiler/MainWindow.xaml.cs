@@ -35,7 +35,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            using (StreamReader s = new StreamReader("DeepBlack.xshd"))
+            using (StreamReader s = new StreamReader(@"Resources\Python.xshd"))
             {
                 using (XmlTextReader reader = new XmlTextReader(s))
                 {
