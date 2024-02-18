@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Highlighting;
 using Microsoft.Xaml.Behaviors;
 using System;
 using System.Collections.Generic;
@@ -50,4 +51,6 @@ public sealed class AvalonEditBehaviour : Behavior<TextEditor>
             }
         }
     }
+
+
 }

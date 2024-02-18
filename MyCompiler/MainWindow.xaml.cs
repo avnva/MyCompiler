@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.IO;
+using System.Xml;
 
 namespace MyCompiler;
 
@@ -19,7 +24,31 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        CompilerViewModel viewModel = new CompilerViewModel();
+        DataContext = viewModel;
     }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using (StreamReader s = new StreamReader("DeepBlack.xshd"))
+            {
+                using (XmlTextReader reader = new XmlTextReader(s))
+                {
+                    textEditor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to load syntax highlighting: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        
+    }
+
+
     private void textEditor_TextChanged(object sender, EventArgs e)
     {
         undoButton.IsEnabled = textEditor.CanUndo;
@@ -29,6 +58,30 @@ public partial class MainWindow : Window
         //redoMenuItem.IsEnabled = textEditor.CanRedo;
 
         GetCaretPosition();
+    }
+    private void CutText(object sender, RoutedEventArgs e)
+    {
+        if (textEditor.SelectionLength > 0)
+        {
+            Clipboard.SetText(textEditor.SelectedText);
+            textEditor.Document.Remove(textEditor.SelectionStart, textEditor.SelectionLength);
+        }
+    }
+
+    private void CopyText(object sender, RoutedEventArgs e)
+    {
+        if (textEditor.SelectionLength > 0)
+        {
+            Clipboard.SetText(textEditor.SelectedText);
+        }
+    }
+
+    private void PasteText(object sender, RoutedEventArgs e)
+    {
+        if (Clipboard.ContainsText())
+        {
+            textEditor.Document.Insert(textEditor.CaretOffset, Clipboard.GetText());
+        }
     }
 
     private void textEditor_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -46,5 +99,15 @@ public partial class MainWindow : Window
         int offset = textEditor.CaretOffset;
         var location = textEditor.Document.GetLocation(offset);
         CursorPositionTextBlock.Text = $"Строка: {location.Line}, Столбец: {location.Column}";
+    }
+
+    private void undoButton_Click(object sender, RoutedEventArgs e)
+    {
+        textEditor.Undo();
+    }
+
+    private void redoButton_Click(object sender, RoutedEventArgs e)
+    {
+        textEditor.Redo();
     }
 }
