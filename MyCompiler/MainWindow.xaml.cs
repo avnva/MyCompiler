@@ -25,6 +25,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         CompilerViewModel viewModel = new CompilerViewModel();
+        viewModel.StringSent += OnStringReceived;
         DataContext = viewModel;
     }
 
@@ -48,6 +49,10 @@ public partial class MainWindow : Window
         
     }
 
+    public void OnStringReceived(object sender, MessageEventArgs e)
+    {
+        textEditor.Document.Text = e.Message;
+    }
 
     private void textEditor_TextChanged(object sender, EventArgs e)
     {
