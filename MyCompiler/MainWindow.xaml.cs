@@ -140,4 +140,26 @@ public partial class MainWindow : Window
     {
         textEditor.Redo();
     }
+
+    private void Window_DragEnter(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            e.Effects = DragDropEffects.Copy;
+        }
+        else
+        {
+            e.Effects = DragDropEffects.None;
+        }
+    }
+
+    private void Window_Drop(object sender, DragEventArgs e)
+    {
+        string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+        if (files != null && files.Length > 0)
+        {
+            (DataContext as CompilerViewModel)?.HandleDroppedFiles(files);
+        }
+    }
 }

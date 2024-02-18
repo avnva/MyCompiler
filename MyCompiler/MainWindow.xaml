@@ -8,7 +8,13 @@
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" 
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="MyCompiler" Loaded="Window_Loaded" Height="600" Width="1000">
+        Height="600" Width="1000" 
+        MinHeight="600" MinWidth="1000"
+        Title="{Binding WindowTitle}"
+        Icon="../Resources/icon.ico"
+        DragEnter="Window_DragEnter" Drop="Window_Drop"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
 
     <Grid Background="DimGray">
         <Grid.RowDefinitions>

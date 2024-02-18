@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="Python.xshd" />
+    <None Remove="Resources\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,10 @@
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>

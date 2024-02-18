@@ -155,6 +155,14 @@ public class CompilerViewModel : ViewModelBase
             IsFileModified = false;
         }
     }
+    public void HandleDroppedFiles(string[] files)
+    {
+        if (CancelOperationAfterCheckingForUnsavedChanges())
+            return;
+
+        CurrentFilePath = files[0];
+        ReadFileContent();
+    }
     public void Exit(object obj = null)
     {
         if (CancelOperationAfterCheckingForUnsavedChanges())
