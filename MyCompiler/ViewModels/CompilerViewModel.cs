@@ -176,7 +176,6 @@ public class CompilerViewModel : ViewModelBase
         // Получаем текущее приложение
         var currentApplication = Application.Current as App;
 
-        // Проверяем, чтобы быть уверенными, что мы не пытаемся закрыть null
         if (currentApplication != null)
         {
             // Закрываем приложение
