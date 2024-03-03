@@ -33,7 +33,7 @@ public class LexicalAnalyzer
 
                 switch (value)
                 {
-                    case "Lambda":
+                    case "lambda":
                         Lexemes.Add(new Lexeme(LexemeType.Lambda, value, startIndex + 1, i + 1));
                         break;
                     default:
