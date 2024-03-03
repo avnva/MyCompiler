@@ -111,7 +111,7 @@ lambda a,b : a - b
 
    > При нажатии на лексему в таблице, соответствующий фрагмент текста подсвечивается в поле редактирования.
   
-   ![Тест 2](/README_images/scanner_test_1.png)
+   ![Тест 2](/README_images/scanner_test_2.png)
 3. **Тест №3.** Ошибочный.
 
    ![Тест 3](/README_images/scanner_test_3.png)
