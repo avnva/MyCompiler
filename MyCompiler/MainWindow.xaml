@@ -15,6 +15,11 @@
         DragEnter="Window_DragEnter" Drop="Window_Drop"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
+    
+    <Window.Resources>
+        <local:IncrementConverter x:Key="IncrementConverter" />
+
+    </Window.Resources>
 
     <Grid Background="DimGray">
         <Grid.RowDefinitions>
@@ -173,7 +178,7 @@
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="ContentPaste" />
                 </Button>
-                <Button Padding="5">
+                <Button Padding="5" Command="{Binding StartAnalyzersCommand}">
                     <Button.ToolTip>
                         <ToolTip Content="Пуск" />
                     </Button.ToolTip>
@@ -213,11 +218,81 @@
         </avalonedit:TextEditor>
         <GridSplitter Grid.Row="3" ShowsPreview="False" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
 
-        <DataGrid x:Name="lexerDataGrid" FontSize="16" EnableRowVirtualization="False" Margin="5,10,5,26" SelectedItem="{Binding SelectedLexeme}" ItemsSource="{Binding Lexemes, Mode=OneWay}" 
-                  AlternationCount="{Binding Lexemes.Count}" GridLinesVisibility="All" 
-                  Background="Black" AutoGenerateColumns="False" 
-                  BorderBrush="Gray" Grid.Row="4" Grid.RowSpan="2">
+        <DataGrid x:Name="lexerDataGrid" 
+                  FontSize="16" 
+                  EnableRowVirtualization="False" 
+                  Margin="5" 
+                  SelectedItem="{Binding SelectedLexeme}" 
+                  ItemsSource="{Binding Lexemes, Mode=OneWay}" 
+                  AlternationCount="{Binding Lexemes.Count}" 
+                  GridLinesVisibility="All" 
+                  Background="Black"
+                  AutoGenerateColumns="False" 
+                  BorderBrush="Gray"
+                  Grid.Row="4">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="Black"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="DarkGray"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="DarkGray"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" 
+                       TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="Black" />
+                    <Setter Property="FontWeight" Value="Regular" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="DarkGray"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Ascending">
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="SortDirection" Value="Descending">
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="ScrollBar">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Style>
+            </DataGrid.Resources>
 
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="№" 
+                                    Foreground= "White"
+                                    Binding="{Binding AlternationIndex, 
+                    RelativeSource={RelativeSource AncestorType=DataGridRow}, 
+                    Converter={StaticResource IncrementConverter}}" 
+                                    FontWeight="SemiBold"/>
+                <DataGridTextColumn Header="Условный код" 
+                                    Foreground= "White"
+                                    Binding="{Binding LexemeId, Mode=OneWay}" 
+                                    DisplayIndex="1"/>
+                <DataGridTextColumn Header="Тип лексемы" 
+                                    Foreground= "White"
+                                    Binding="{Binding LexemeName, Mode=OneWay}" 
+                                    DisplayIndex="2"/>
+                <DataGridTextColumn Header="Лексема" 
+                                    Foreground= "White"
+                                    Binding="{Binding Value, Mode=OneWay}" 
+                                    DisplayIndex="3"/>
+                <DataGridTextColumn Header="Местоположение" 
+                                    Foreground= "White"
+                                    Binding="{Binding Position, Mode=OneWay}" 
+                                    DisplayIndex="4"/>
+            </DataGrid.Columns>
         </DataGrid>
 
         <TextBlock Foreground="White" Grid.Row="5" x:Name="CursorPositionTextBlock" FontSize="16" Text="Строка: 1, Столбец: 1" Margin="0 0 5 5" HorizontalAlignment="Right"/>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -11,6 +12,7 @@ public class CompilerViewModel : ViewModelBase
     private string _currentFilePath;
     private string _fileContent;
     private bool _isFileModified;
+    private LexicalAnalyzer _lexicalAnalyzer;
 
     private const string _aboutPath = @"Resources\About.html";
     private const string _helpPath = @"Resources\Help.html";
@@ -22,10 +24,46 @@ public class CompilerViewModel : ViewModelBase
     private RelayCommand _aboutCommand;
     private RelayCommand _helpCommand;
     private RelayCommand _exitCommand;
+    private RelayCommand _startAnalyzersCommand;
 
     public event EventHandler<MessageEventArgs> StringSent;
     public event EventHandler RequestClose;
+    public event EventHandler<Lexeme> LexemeSent;
 
+    private List<Lexeme> _lexemesList;
+    private ObservableCollection<Lexeme> _lexemes;
+    private ObservableCollection<Lexeme> _incorrectLexemes;
+    private Lexeme _selectedLexeme;
+
+    public ObservableCollection<Lexeme> Lexemes
+    {
+        get { return _lexemes; }
+        set
+        {
+            _lexemes = value;
+            OnPropertyChanged(nameof(Lexemes));
+        }
+    }
+    public ObservableCollection<Lexeme> IncorrectLexemes
+    {
+        get { return _incorrectLexemes; }
+        set
+        {
+            _incorrectLexemes = value;
+            OnPropertyChanged(nameof(IncorrectLexemes));
+        }
+    }
+
+    public Lexeme SelectedLexeme
+    {
+        get { return _selectedLexeme; }
+        set
+        {
+            _selectedLexeme = value;
+            LexemeSent(this, value);
+            OnPropertyChanged(nameof(SelectedLexeme));
+        }
+    }
     public string FileContent
     {
         get { return _fileContent; }
@@ -67,6 +105,7 @@ public class CompilerViewModel : ViewModelBase
     public CompilerViewModel()
     {
         _fileManager = new FileManager();
+        _lexicalAnalyzer = new LexicalAnalyzer();
         _fileContent = string.Empty;
         CurrentFilePath = string.Empty;
         IsFileModified = false;
@@ -104,6 +143,10 @@ public class CompilerViewModel : ViewModelBase
     public RelayCommand HelpCommand
     {
         get => _helpCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_helpPath));
+    }
+    public RelayCommand StartAnalyzersCommand
+    {
+        get => _startAnalyzersCommand ??= new RelayCommand(StartAnalysis);
     }
 
     public void CreateNewFile(object obj)
@@ -218,5 +261,14 @@ public class CompilerViewModel : ViewModelBase
         SendString(_fileContent);
         IsFileModified = false;
     }
+    public void StartAnalysis(object obj)
+    {
+        LexicalAnalysis();
+    }
+    public void LexicalAnalysis()
+    {
+        _lexemesList = _lexicalAnalyzer.Analyze(FileContent);
 
+        Lexemes = new ObservableCollection<Lexeme>(_lexemesList);
+    }
 }

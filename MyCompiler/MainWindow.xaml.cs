@@ -26,6 +26,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         CompilerViewModel viewModel = new CompilerViewModel();
         viewModel.StringSent += OnStringReceived;
+        viewModel.LexemeSent += OnLexemeReceived;
         DataContext = viewModel;
 
         Closing += MainWindow_Closing;
@@ -65,7 +66,13 @@ public partial class MainWindow : Window
     {
         textEditor.Document.Text = e.Message;
     }
-
+    public void OnLexemeReceived(object sender, Lexeme e)
+    {
+        if (e != null && e.EndIndex <= textEditor.Document.Text.Length)
+        {
+            textEditor.Select(e.StartIndex - 1, e.EndIndex - e.StartIndex + 1);
+        }
+    }
     private void textEditor_TextChanged(object sender, EventArgs e)
     {
         undoButton.IsEnabled = textEditor.CanUndo;
