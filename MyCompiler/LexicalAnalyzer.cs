@@ -105,7 +105,7 @@ public class LexicalAnalyzer
                             Lexemes.Add(new Lexeme(LexemeType.Divide, value, i + 1, i + 1));
                             break;
                         case '#':
-                            Lexemes.Add(new Lexeme(LexemeType.Octothorpe, value, i + 1, i + 1));
+                            Lexemes.Add(new Lexeme(LexemeType.Semicolon, value, i + 1, i + 1));
                             break;
                         default:
                             Lexemes.Add(new Lexeme(LexemeType.InvalidCharacter, value, i + 1, i + 1));

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ public enum LexemeType
     Minus = 11,
     Multiply = 12,
     Divide = 13,
-    Octothorpe = 14,
+    Semicolon = 14,
     InvalidCharacter = 15
 }
 
