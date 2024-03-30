@@ -56,7 +56,7 @@ public class LambdaState : IState
             }
         }
 
-        stateMap[StatesType.Whitespace].Handle();
+        stateMap[StatesType.FirstArgument].Handle();
         return true;
     }
 }

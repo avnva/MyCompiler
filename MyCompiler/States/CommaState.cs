@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MyCompiler.States;
 
-public class FirstOperatorNameState : IState
+public class CommaState : IState
 {
     private List<ParserError> errors;
     private StringHelper stringHelper;
     private Dictionary<StatesType, IState> StateMap;
 
-    public FirstOperatorNameState(List<ParserError> errors, StringHelper stringHelper, Dictionary<StatesType, IState> StateMap)
+    public CommaState(List<ParserError> errors, StringHelper stringHelper, Dictionary<StatesType, IState> StateMap)
     {
         this.errors = errors;
         this.stringHelper = stringHelper;
@@ -22,21 +22,12 @@ public class FirstOperatorNameState : IState
     public bool Handle()
     {
         stringHelper.SkipSpaces();
+        char currentSymbol;
 
-        if (!stringHelper.CanGetCurrent)
+
+        ParserError error = new ParserError("Ожидалась запятая", stringHelper.Index + 1, stringHelper.Index + 1);
+        while (true)
         {
-            errors.Add(new ParserError("Обнаружено незаконченное выражение", stringHelper.Index, stringHelper.Index, ErrorType.UnfinishedExpression));
-            return false;
-        }
-
-        char currentSymbol = stringHelper.Current;
-        bool IsNotFirstSymbol = false;
-
-        ParserError error = new ParserError("Ожидался аргумент", stringHelper.Index + 1, stringHelper.Index + 1);
-        while (!stringHelper.isSpace(currentSymbol))
-        {
-            if (currentSymbol == '+' || currentSymbol == '-' || currentSymbol == '*' || currentSymbol == '/')
-                break;
             if (!stringHelper.CanGetNext)
             {
                 if (error.Value != string.Empty)
@@ -47,12 +38,13 @@ public class FirstOperatorNameState : IState
 
             currentSymbol = stringHelper.Current;
 
-            if (char.IsLetter(currentSymbol) || (char.IsDigit(currentSymbol) || currentSymbol == '_') && IsNotFirstSymbol)
+            if (currentSymbol == ',')
             {
-                IsNotFirstSymbol = true;
                 if (error.Value != string.Empty)
                     errors.Add(error);
-                error = new ParserError("Ожидался аргумент", stringHelper.Index + 1, stringHelper.Index + 1);
+                if (stringHelper.CanGetNext)
+                    currentSymbol = stringHelper.Next;
+                break;
             }
             else
             {
@@ -61,7 +53,8 @@ public class FirstOperatorNameState : IState
             }
             currentSymbol = stringHelper.Next;
         }
-        StateMap[StatesType.ArithmeticOperator].Handle();
+
+        StateMap[StatesType.SecondArgument].Handle();
         return true;
     }
 }

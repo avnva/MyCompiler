@@ -10,9 +10,9 @@ public class SemicolonState : IState
 {
     private List<ParserError> errors;
     private StringHelper stringHelper;
-    private Dictionary<LexemeType, IState> StateMap;
+    private Dictionary<StatesType, IState> StateMap;
 
-    public SemicolonState(List<ParserError> errors, StringHelper stringHelper, Dictionary<LexemeType, IState> StateMap)
+    public SemicolonState(List<ParserError> errors, StringHelper stringHelper, Dictionary<StatesType, IState> StateMap)
     {
         this.errors = errors;
         this.stringHelper = stringHelper;
@@ -24,7 +24,7 @@ public class SemicolonState : IState
         if (stringHelper.CanGetNext)
         {
             _ = stringHelper.Next;
-            StateMap[LexemeType.Lambda].Handle();
+            StateMap[StatesType.Lambda].Handle();
         }
         else
         {

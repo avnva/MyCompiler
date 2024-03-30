@@ -27,6 +27,7 @@ public partial class MainWindow : Window
         CompilerViewModel viewModel = new CompilerViewModel();
         viewModel.StringSent += OnStringReceived;
         viewModel.LexemeSent += OnLexemeReceived;
+        viewModel.ErrorSent += OnErrorReceived;
         DataContext = viewModel;
 
         Closing += MainWindow_Closing;
@@ -67,6 +68,13 @@ public partial class MainWindow : Window
         textEditor.Document.Text = e.Message;
     }
     public void OnLexemeReceived(object sender, Lexeme e)
+    {
+        if (e != null && e.EndIndex <= textEditor.Document.Text.Length)
+        {
+            textEditor.Select(e.StartIndex - 1, e.EndIndex - e.StartIndex + 1);
+        }
+    }
+    public void OnErrorReceived(object sender, ParserError e)
     {
         if (e != null && e.EndIndex <= textEditor.Document.Text.Length)
         {

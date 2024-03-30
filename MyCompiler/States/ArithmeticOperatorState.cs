@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyCompiler.States;
 
+
 public class ArithmeticOperatorState : IState
 {
     private List<ParserError> errors;
@@ -25,7 +26,7 @@ public class ArithmeticOperatorState : IState
         char currentSymbol;
 
 
-        ParserError error = new ParserError("Ожидался оператор присваивания", stringHelper.Index + 1, stringHelper.Index + 1);
+        ParserError error = new ParserError("Ожидался оператор", stringHelper.Index + 1, stringHelper.Index + 1);
         while (true)
         {
             if (!stringHelper.CanGetNext)

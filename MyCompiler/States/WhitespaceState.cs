@@ -21,11 +21,10 @@ public class WhitespaceState : IState
 
     public bool Handle()
     {
-        //stringHelper.SkipSpaces();
+        stringHelper.SkipSpaces();
         char currentSymbol;
-        bool IsWhitespaceMet = false;
 
-        ParserError error = new ParserError("Ожидался пробел или двоеточие", stringHelper.Index + 1, stringHelper.Index + 1);
+        ParserError error = new ParserError("Ожидалось двоеточие", stringHelper.Index + 1, stringHelper.Index + 1);
         while (true)
         {
             if (!stringHelper.CanGetNext)
@@ -38,17 +37,8 @@ public class WhitespaceState : IState
 
             currentSymbol = stringHelper.Current;
 
-            if (currentSymbol == ' ')
+            if (currentSymbol == ':')
             {
-                IsWhitespaceMet = true;
-                if (error.Value != string.Empty)
-                    errors.Add(error);
-                stringHelper.SkipSpaces();
-                error = new ParserError("Ожидался аргумент или двоеточие", stringHelper.Index + 2, stringHelper.Index + 1);
-            }
-            else if (currentSymbol == ':')
-            {
-                IsWhitespaceMet = false;
                 if (error.Value != string.Empty)
                     errors.Add(error);
                 if (stringHelper.CanGetNext)
@@ -62,7 +52,7 @@ public class WhitespaceState : IState
             }
             currentSymbol = stringHelper.Next;
         }
-            StateMap[StatesType.Identifier].Handle();
+            StateMap[StatesType.FirstOperator].Handle();
             //StateMap[LexemeType.FirstOperatorNameState].Handle();
         return true;
     }

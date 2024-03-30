@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace MyCompiler.States;
 
-public class FirstOperatorNameState : IState
+public class SecondArgState : IState
 {
     private List<ParserError> errors;
     private StringHelper stringHelper;
     private Dictionary<StatesType, IState> StateMap;
 
-    public FirstOperatorNameState(List<ParserError> errors, StringHelper stringHelper, Dictionary<StatesType, IState> StateMap)
+    public SecondArgState(List<ParserError> errors, StringHelper stringHelper, Dictionary<StatesType, IState> StateMap)
     {
         this.errors = errors;
         this.stringHelper = stringHelper;
@@ -35,7 +35,7 @@ public class FirstOperatorNameState : IState
         ParserError error = new ParserError("Ожидался аргумент", stringHelper.Index + 1, stringHelper.Index + 1);
         while (!stringHelper.isSpace(currentSymbol))
         {
-            if (currentSymbol == '+' || currentSymbol == '-' || currentSymbol == '*' || currentSymbol == '/')
+            if (currentSymbol == ':')
                 break;
             if (!stringHelper.CanGetNext)
             {
@@ -52,7 +52,7 @@ public class FirstOperatorNameState : IState
                 IsNotFirstSymbol = true;
                 if (error.Value != string.Empty)
                     errors.Add(error);
-                error = new ParserError("Ожидался аргумент", stringHelper.Index + 1, stringHelper.Index + 1);
+                error = new ParserError("Ожидался идентификатор", stringHelper.Index + 1, stringHelper.Index + 1);
             }
             else
             {
@@ -61,7 +61,8 @@ public class FirstOperatorNameState : IState
             }
             currentSymbol = stringHelper.Next;
         }
-        StateMap[StatesType.ArithmeticOperator].Handle();
+
+        StateMap[StatesType.Сolon].Handle();
         return true;
     }
 }

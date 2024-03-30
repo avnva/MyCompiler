@@ -14,12 +14,14 @@ public enum StatesType
     Identifier = 1,
     AssignmentOperator = 2,
     Lambda = 3,
-    Whitespace = 4,
-    Arguments = 5,
-    FirstOperator = 6,
-    ArithmeticOperator =7,
-    SecondOperator = 8,
-    Semicolon = 9
+    Сolon = 4,
+    FirstArgument = 5,
+    Comma = 6,
+    SecondArgument = 8,
+    FirstOperator = 9,
+    ArithmeticOperator =10,
+    SecondOperator = 11,
+    Semicolon = 12
 }
 public class Parser
 {
@@ -45,8 +47,10 @@ public class Parser
         StateMap.Add(StatesType.Identifier, new IdState(Errors, StringHelper, StateMap));
         StateMap.Add(StatesType.AssignmentOperator, new AssignmentOperatorState(Errors, StringHelper, StateMap));
         StateMap.Add(StatesType.Lambda, new LambdaState(Errors, StringHelper, StateMap));
-        StateMap.Add(StatesType.Whitespace, new WhitespaceState(Errors, StringHelper, StateMap));
-        StateMap.Add(StatesType.Arguments, new ArgState(Errors, StringHelper, StateMap));
+        StateMap.Add(StatesType.FirstArgument, new FirstArgState(Errors, StringHelper, StateMap));
+        StateMap.Add(StatesType.Comma, new CommaState(Errors, StringHelper, StateMap));
+        StateMap.Add(StatesType.SecondArgument, new SecondArgState(Errors, StringHelper, StateMap));
+        StateMap.Add(StatesType.Сolon, new WhitespaceState(Errors, StringHelper, StateMap));
         StateMap.Add(StatesType.FirstOperator, new FirstOperatorNameState(Errors, StringHelper, StateMap));
         StateMap.Add(StatesType.ArithmeticOperator, new ArithmeticOperatorState(Errors, StringHelper, StateMap));
         StateMap.Add(StatesType.SecondOperator, new SecondOperatorNameState(Errors, StringHelper, StateMap));

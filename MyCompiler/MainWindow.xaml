@@ -6,7 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:MyCompiler"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" 
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" d:DataContext="{d:DesignInstance Type=local:CompilerViewModel}"
         mc:Ignorable="d"
         Height="600" Width="1000" 
         MinHeight="600" MinWidth="1000"
@@ -217,8 +217,69 @@
 
         </avalonedit:TextEditor>
         <GridSplitter Grid.Row="3" ShowsPreview="False" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
+        <TabControl Foreground="White" Background="Black" Grid.Row="4" Style="{StaticResource MaterialDesignNavigationRailTabControl}">
+            <TabItem Foreground="White" Header="Парсер" ToolTip="Синтаксический анализатор" VerticalAlignment="Stretch">
+                <DataGrid x:Name="parserDataGrid" 
+                          FontSize="16" 
+                          EnableRowVirtualization="False" 
+                          Margin="5" 
+                          ItemsSource="{Binding IncorrectLexemes, Mode=OneWay}" 
+                          SelectedItem="{Binding SelectedError}" 
+                          AlternationCount="{Binding IncorrectLexemes.Count}" 
+                          GridLinesVisibility="All" 
+                          Background="Black"
+                          AutoGenerateColumns="False" 
+                          BorderBrush="Gray"
+                          Foreground="White"
+                          Grid.Row="4">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Black"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Resources>
+                        <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" 
+                        TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Background" Value="Black" />
+                            <Setter Property="FontWeight" Value="Regular" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Ascending">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Descending">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                        <Style TargetType="ScrollBar">
+                            <Setter Property="Background" Value="Black"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Style>
+                    </DataGrid.Resources>
 
-        <DataGrid x:Name="lexerDataGrid" 
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№" Binding="{Binding AlternationIndex, RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource IncrementConverter}}" FontWeight="SemiBold"/>
+                        <DataGridTextColumn Header="Местоположение" Binding="{Binding Position, Mode=OneWay}"/>
+                        <DataGridTextColumn Header="Сообщение" Binding="{Binding Message, Mode=OneWay}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Сканер" ToolTip="Лексический анализатор" VerticalAlignment="Stretch">
+                <DataGrid x:Name="lexerDataGrid" 
                   FontSize="16" 
                   EnableRowVirtualization="False" 
                   Margin="5" 
@@ -294,7 +355,8 @@
                                     DisplayIndex="4"/>
             </DataGrid.Columns>
         </DataGrid>
-
+            </TabItem>
+        </TabControl>
         <TextBlock Foreground="White" Grid.Row="5" x:Name="CursorPositionTextBlock" FontSize="16" Text="Строка: 1, Столбец: 1" Margin="0 0 5 5" HorizontalAlignment="Right"/>
 
     </Grid>

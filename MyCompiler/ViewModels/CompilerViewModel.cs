@@ -13,6 +13,8 @@ public class CompilerViewModel : ViewModelBase
     private string _fileContent;
     private bool _isFileModified;
     private LexicalAnalyzer _lexicalAnalyzer;
+    private Parser _parser;
+
 
     private const string _aboutPath = @"Resources\About.html";
     private const string _helpPath = @"Resources\Help.html";
@@ -26,14 +28,22 @@ public class CompilerViewModel : ViewModelBase
     private RelayCommand _exitCommand;
     private RelayCommand _startAnalyzersCommand;
 
+    
+    private RelayCommand _neutralizingErrorsCommand;
+    private RelayCommand _methodOfAnalysisCommand;
+    private RelayCommand _viewSourceCodeCommand;
+    private RelayCommand _removeErrorsCommand;
+
     public event EventHandler<MessageEventArgs> StringSent;
     public event EventHandler RequestClose;
     public event EventHandler<Lexeme> LexemeSent;
+    public event EventHandler<ParserError> ErrorSent;
 
     private List<Lexeme> _lexemesList;
     private ObservableCollection<Lexeme> _lexemes;
-    private ObservableCollection<Lexeme> _incorrectLexemes;
+    private ObservableCollection<ParserError> _incorrectLexemes;
     private Lexeme _selectedLexeme;
+    private ParserError _selectedError;
 
     public ObservableCollection<Lexeme> Lexemes
     {
@@ -44,7 +54,8 @@ public class CompilerViewModel : ViewModelBase
             OnPropertyChanged(nameof(Lexemes));
         }
     }
-    public ObservableCollection<Lexeme> IncorrectLexemes
+
+    public ObservableCollection<ParserError> IncorrectLexemes
     {
         get { return _incorrectLexemes; }
         set
@@ -64,6 +75,18 @@ public class CompilerViewModel : ViewModelBase
             OnPropertyChanged(nameof(SelectedLexeme));
         }
     }
+
+    public ParserError SelectedError
+    {
+        get { return _selectedError; }
+        set
+        {
+            _selectedError = value;
+            ErrorSent(this, value);
+            OnPropertyChanged(nameof(SelectedLexeme));
+        }
+    }
+
     public string FileContent
     {
         get { return _fileContent; }
@@ -106,6 +129,8 @@ public class CompilerViewModel : ViewModelBase
     {
         _fileManager = new FileManager();
         _lexicalAnalyzer = new LexicalAnalyzer();
+        IncorrectLexemes = new ObservableCollection<ParserError>();
+        _parser = new Parser(string.Empty);
         _fileContent = string.Empty;
         CurrentFilePath = string.Empty;
         IsFileModified = false;
@@ -264,6 +289,7 @@ public class CompilerViewModel : ViewModelBase
     public void StartAnalysis(object obj)
     {
         LexicalAnalysis();
+        Parsing();
     }
     public void LexicalAnalysis()
     {
@@ -271,4 +297,9 @@ public class CompilerViewModel : ViewModelBase
 
         Lexemes = new ObservableCollection<Lexeme>(_lexemesList);
     }
+    public void Parsing()
+    {
+        IncorrectLexemes = new ObservableCollection<ParserError>(_parser.Parse(FileContent));
+    }
+
 }
