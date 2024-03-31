@@ -23,11 +23,8 @@ public class IdState : IState
     {
         stringHelper.SkipSpaces();
 
-        if (!stringHelper.CanGetCurrent)
-        {
-            errors.Add(new ParserError("Обнаружено незаконченное выражение", stringHelper.Index, stringHelper.Index, ErrorType.UnfinishedExpression));
-            return false;
-        }
+        if (!stringHelper.CanGetNext)
+            return true;
 
         char currentSymbol = stringHelper.Current;
         bool IsNotFirstSymbol = false;

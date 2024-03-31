@@ -18,6 +18,14 @@ public class CompilerViewModel : ViewModelBase
 
     private const string _aboutPath = @"Resources\About.html";
     private const string _helpPath = @"Resources\Help.html";
+    private const string _grammarPath = @"Resources\Grammar.html";
+    private const string _grammarClassificationPath = @"Resources\GrammarClassification.html";
+    private const string _literaturePath = @"Resources\Literature.html";
+    private const string _methodAnalysisPath = @"Resources\MethodOfAnalysis.html";
+    private const string _neutralizingErrorsPath = @"Resources\NeutralizingErrors.html";
+    private const string _taskSettingPath = @"Resources\ProblemStatement.html";
+    private const string _sourceCode = @"https://github.com/avnva/MyCompiler";
+
 
     private RelayCommand _createNewFileCommand;
     private RelayCommand _openFileCommand;
@@ -27,8 +35,10 @@ public class CompilerViewModel : ViewModelBase
     private RelayCommand _helpCommand;
     private RelayCommand _exitCommand;
     private RelayCommand _startAnalyzersCommand;
-
-    
+    private RelayCommand _grammarClassificationCommand;
+    private RelayCommand _grammarCommand;
+    private RelayCommand _problemStatementCommand;
+    private RelayCommand _literatureCommand;
     private RelayCommand _neutralizingErrorsCommand;
     private RelayCommand _methodOfAnalysisCommand;
     private RelayCommand _viewSourceCodeCommand;
@@ -44,6 +54,8 @@ public class CompilerViewModel : ViewModelBase
     private ObservableCollection<ParserError> _incorrectLexemes;
     private Lexeme _selectedLexeme;
     private ParserError _selectedError;
+
+    
 
     public ObservableCollection<Lexeme> Lexemes
     {
@@ -125,6 +137,7 @@ public class CompilerViewModel : ViewModelBase
         get => $"MyCompiler — {((CurrentFilePath == string.Empty) ? "Новый файл.txt" : "")}{_currentFilePath.Split(@"\").Last()}{(IsFileModified ? "*" : "")} {((CurrentFilePath != string.Empty) ? "(" : "")}{_currentFilePath}{((CurrentFilePath != string.Empty) ? ")" : "")}";
     }
 
+
     public CompilerViewModel()
     {
         _fileManager = new FileManager();
@@ -172,6 +185,59 @@ public class CompilerViewModel : ViewModelBase
     public RelayCommand StartAnalyzersCommand
     {
         get => _startAnalyzersCommand ??= new RelayCommand(StartAnalysis);
+    }
+    public RelayCommand RemoveErrorsCommand
+    {
+        get => _removeErrorsCommand ??= new RelayCommand(RemoveErrors);
+    }
+
+
+
+
+
+
+
+    public RelayCommand NeutralizingErrorsCommand
+    {
+        get => _neutralizingErrorsCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_neutralizingErrorsPath));
+    }
+
+    public RelayCommand MethodAnalysisCommand
+    {
+        get => _methodOfAnalysisCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_methodAnalysisPath));
+    }
+
+    public RelayCommand GrammarClassificationCommand
+    {
+        get => _grammarClassificationCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_grammarClassificationPath));
+    }
+
+    public RelayCommand GrammarCommand
+    {
+        get => _grammarCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_grammarPath));
+    }
+
+    public RelayCommand TaskSettingCommand
+    {
+        get => _problemStatementCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_taskSettingPath));
+    }
+
+    public RelayCommand LiteratureCommand
+    {
+        get => _literatureCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_literaturePath));
+    }
+
+    public RelayCommand ViewSourceCodeCommand
+    {
+        get => _viewSourceCodeCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_sourceCode));
+    }
+    public void RemoveErrors(object obj)
+    {
+        StartAnalysis();
+        FileContent = TextCleaner.RemoveIncorrectLexemes(_fileContent, _incorrectLexemes);
+        StartAnalysis();
+
+        SendString(_fileContent);
     }
 
     public void CreateNewFile(object obj)
@@ -286,7 +352,7 @@ public class CompilerViewModel : ViewModelBase
         SendString(_fileContent);
         IsFileModified = false;
     }
-    public void StartAnalysis(object obj)
+    public void StartAnalysis(object obj = null)
     {
         LexicalAnalysis();
         Parsing();
