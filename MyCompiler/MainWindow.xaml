@@ -15,7 +15,7 @@
         DragEnter="Window_DragEnter" Drop="Window_Drop"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
-    
+
     <Window.Resources>
         <local:IncrementConverter x:Key="IncrementConverter" />
         <local:CountToVisibleConverter x:Key="CountToVisibleConverter"/>
@@ -222,7 +222,7 @@
 
         </avalonedit:TextEditor>
         <GridSplitter Grid.Row="3" ShowsPreview="False" Height="5" HorizontalAlignment="Stretch" Background="Gray"/>
-        <TabControl Foreground="White" Background="Black" Grid.Row="4" Style="{StaticResource MaterialDesignNavigationRailTabControl}">
+        <TabControl Foreground="White" Background="Black" Grid.Row="4" Style="{StaticResource MaterialDesignNavigationRailTabControl}" OpacityMask="Black">
             <TabItem Foreground="White" Header="Парсер" ToolTip="Синтаксический анализатор" VerticalAlignment="Stretch">
                 <DataGrid x:Name="parserDataGrid" 
                           FontSize="16" 
@@ -283,7 +283,7 @@
                 </DataGrid>
             </TabItem>
 
-            <TabItem Header="Сканер" ToolTip="Лексический анализатор" VerticalAlignment="Stretch">
+            <TabItem Foreground="White" Header="Сканер" ToolTip="Лексический анализатор" VerticalAlignment="Stretch" Background="#DD000000" BorderBrush="#DDFFFFFF" OpacityMask="White">
                 <DataGrid x:Name="lexerDataGrid" 
                   FontSize="16" 
                   EnableRowVirtualization="False" 
@@ -295,76 +295,77 @@
                   Background="Black"
                   AutoGenerateColumns="False" 
                   BorderBrush="Gray"
+                  Foreground="White"
                   Grid.Row="4">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Background" Value="Black"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="DarkGray"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="DarkGray"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Resources>
-                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" 
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Black"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Resources>
+                        <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" 
                        TargetType="{x:Type DataGridColumnHeader}">
-                    <Setter Property="Background" Value="Black" />
-                    <Setter Property="FontWeight" Value="Regular" />
-                    <Setter Property="Foreground" Value="White" />
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="DarkGray"/>
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
-                        <Trigger Property="SortDirection" Value="Ascending">
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
-                        <Trigger Property="SortDirection" Value="Descending">
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-                <Style TargetType="ScrollBar">
-                    <Setter Property="Background" Value="Black"/>
-                    <Setter Property="Foreground" Value="Black"/>
-                </Style>
-            </DataGrid.Resources>
+                            <Setter Property="Background" Value="Black" />
+                            <Setter Property="FontWeight" Value="Regular" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="DarkGray"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Ascending">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="SortDirection" Value="Descending">
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                        <Style TargetType="ScrollBar">
+                            <Setter Property="Background" Value="Black"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Style>
+                    </DataGrid.Resources>
 
-            <DataGrid.Columns>
+                    <DataGrid.Columns>
 
-                <DataGridTextColumn Header="№" 
+                        <DataGridTextColumn Header="№" 
                                     Foreground= "White"
                                     Binding="{Binding AlternationIndex, 
                     RelativeSource={RelativeSource AncestorType=DataGridRow}, 
                     Converter={StaticResource IncrementConverter}}" 
                                     FontWeight="SemiBold"/>
-                <DataGridTextColumn Header="Условный код" 
+                        <DataGridTextColumn Header="Условный код" 
                                     Foreground= "White"
                                     Binding="{Binding LexemeId, Mode=OneWay}" 
                                     DisplayIndex="1"/>
-                <DataGridTextColumn Header="Тип лексемы" 
+                        <DataGridTextColumn Header="Тип лексемы" 
                                     Foreground= "White"
                                     Binding="{Binding LexemeName, Mode=OneWay}" 
                                     DisplayIndex="2"/>
-                <DataGridTextColumn Header="Лексема" 
+                        <DataGridTextColumn Header="Лексема" 
                                     Foreground= "White"
                                     Binding="{Binding Value, Mode=OneWay}" 
                                     DisplayIndex="3"/>
-                <DataGridTextColumn Header="Местоположение" 
+                        <DataGridTextColumn Header="Местоположение" 
                                     Foreground= "White"
                                     Binding="{Binding Position, Mode=OneWay}" 
                                     DisplayIndex="4"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                    </DataGrid.Columns>
+                </DataGrid>
             </TabItem>
         </TabControl>
         <StackPanel x:Name="errorStackPanel" Grid.Row="5" Orientation="Horizontal" Visibility="{Binding IncorrectLexemes.Count, Converter={StaticResource CountToVisibleConverter}}">
             <materialDesign:PackIcon Kind="Error" Margin="5 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFE03D48"/>
-            <TextBlock Text="{Binding IncorrectLexemes.Count}" Margin="5 0 5 0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
+            <TextBlock Foreground="White" Text="{Binding IncorrectLexemes.Count}" Margin="5 0 5 0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
             <Button Padding="0" x:Name="magicButton" Command="{Binding RemoveErrorsCommand}" Margin="0" Height="16" BorderBrush="#00481E94" Foreground="#FF1F2DFF" Background="#00E1FFD0" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button.ToolTip>
                     <ToolTip Content="Исправить найденные ошибки (F6)" />

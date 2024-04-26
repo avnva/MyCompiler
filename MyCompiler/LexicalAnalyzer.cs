@@ -61,10 +61,10 @@ public class LexicalAnalyzer
                             i++;
                             value += input[i];
                         }
-                        Lexemes.Add(new Lexeme(LexemeType.FloatDigit, value, startIndex + 1, i + 1));
+                        Lexemes.Add(new Lexeme(LexemeType.Float, value, startIndex + 1, i + 1));
                     }
                     else 
-                        Lexemes.Add(new Lexeme(LexemeType.IntDigit, value, startIndex + 1, i + 1));
+                        Lexemes.Add(new Lexeme(LexemeType.Integer, value, startIndex + 1, i + 1));
                 }
                 else
                 {
@@ -87,7 +87,7 @@ public class LexicalAnalyzer
                             }
                             break;
                         case ':':
-                            Lexemes.Add(new Lexeme(LexemeType.StartFunction, value, i + 1, i + 1));
+                            Lexemes.Add(new Lexeme(LexemeType.Colon, value, i + 1, i + 1));
                             break;
                         case '=':
                             Lexemes.Add(new Lexeme(LexemeType.AssignmentOperator, value, i + 1, i + 1));
@@ -104,8 +104,17 @@ public class LexicalAnalyzer
                         case '/':
                             Lexemes.Add(new Lexeme(LexemeType.Divide, value, i + 1, i + 1));
                             break;
-                        case '#':
+                        case ';':
                             Lexemes.Add(new Lexeme(LexemeType.Semicolon, value, i + 1, i + 1));
+                            break;
+                        case ',':
+                            Lexemes.Add(new Lexeme(LexemeType.Comma, value, i + 1, i + 1));
+                            break;
+                        case '(':
+                            Lexemes.Add(new Lexeme(LexemeType.OpenBracket, value, i + 1, i + 1));
+                            break;
+                        case ')':
+                            Lexemes.Add(new Lexeme(LexemeType.CloseBracket, value, i + 1, i + 1));
                             break;
                         default:
                             Lexemes.Add(new Lexeme(LexemeType.InvalidCharacter, value, i + 1, i + 1));
