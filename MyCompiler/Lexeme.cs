@@ -7,25 +7,6 @@ using System.Threading.Tasks;
 
 namespace MyCompiler;
 
-//public enum LexemeType
-//{
-//    Lambda = 1,
-//    Identifier = 2,
-//    Whitespace = 3,
-//    NewLine = 4,
-//    AssignmentOperator = 5,
-//    StartFunction = 6,
-//    Comma = 7,
-//    IntDigit = 8,
-//    FloatDigit = 9,
-//    Plus = 10,
-//    Minus = 11,
-//    Multiply = 12,
-//    Divide = 13,
-//    Semicolon = 14,
-//    InvalidCharacter = 15
-//}
-
 public enum LexemeType
 {
     Identifier = 1,             // имя переменной
@@ -47,7 +28,20 @@ public enum LexemeType
     InvalidCharacter = 17
 }
 
-
+public enum StatesType
+{
+    Identifier = 1,
+    AssignmentOperator = 2,
+    Lambda = 3,
+    Сolon = 4,
+    FirstArgument = 5,
+    Comma = 6,
+    SecondArgument = 8,
+    FirstOperator = 9,
+    ArithmeticOperator = 10,
+    SecondOperator = 11,
+    Semicolon = 12
+}
 public class Lexeme
 {
     private string[] lexemeNames;

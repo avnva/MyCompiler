@@ -72,14 +72,14 @@ public class LexicalAnalyzer
                     {
                         case '\t': //tab
                         case ' ':
-                            Lexemes.Add(new Lexeme(LexemeType.Whitespace, value, i + 1, i + 1));
+                            //Lexemes.Add(new Lexeme(LexemeType.Whitespace, value, i + 1, i + 1));
                             break;
                         case (char)13:
                             if ((i + 1) < input.Length && input[i + 1] == (char)10)
                             {
                                 i++;
                                 value = "\\n";
-                                Lexemes.Add(new Lexeme(LexemeType.NewLine, value, i, i + 1));
+                                //Lexemes.Add(new Lexeme(LexemeType.NewLine, value, i, i + 1));
                             }
                             else
                             {

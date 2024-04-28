@@ -143,7 +143,7 @@ public class CompilerViewModel : ViewModelBase
         _fileManager = new FileManager();
         _lexicalAnalyzer = new LexicalAnalyzer();
         IncorrectLexemes = new ObservableCollection<ParserError>();
-        _parser = new Parser(string.Empty);
+        _parser = new Parser();
         _fileContent = string.Empty;
         CurrentFilePath = string.Empty;
         IsFileModified = false;
@@ -354,7 +354,7 @@ public class CompilerViewModel : ViewModelBase
     }
     public void StartAnalysis(object obj = null)
     {
-        LexicalAnalysis();
+        //LexicalAnalysis();
         Parsing();
     }
     public void LexicalAnalysis()
@@ -365,7 +365,10 @@ public class CompilerViewModel : ViewModelBase
     }
     public void Parsing()
     {
-        IncorrectLexemes = new ObservableCollection<ParserError>(_parser.Parse(FileContent));
+        _lexemesList = _lexicalAnalyzer.Analyze(FileContent);
+
+        Lexemes = new ObservableCollection<Lexeme>(_lexemesList);
+        IncorrectLexemes = new ObservableCollection<ParserError>(_parser.Parse(_lexemesList));
     }
 
 }
