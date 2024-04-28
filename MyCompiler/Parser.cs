@@ -116,7 +116,7 @@ public class Parser
         }
         else
         {
-            if (CurrToken.Type == LexemeType.AssignmentOperator)
+            if (CurrToken.Type == LexemeType.Lambda)
             {
                 Errors.Add(new ParserError($"Пропущен оператор присваивания", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 Lambda(false);
@@ -125,7 +125,7 @@ public class Parser
             {
                 Errors.Add(new ParserError($"Ожидался оператор присваивания, а встречено \"{CurrToken.Value}\"", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
 
-                if (GetNextType() == LexemeType.Identifier)
+                if (GetNextType() == LexemeType.AssignmentOperator)
                     Assignment(true);
                 else
                     Lambda(true);
@@ -142,7 +142,7 @@ public class Parser
         }
         else
         {
-            if ((CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Comma) || (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon))
+            if (CurrToken.Type == LexemeType.Identifier /*&& GetNextType() == LexemeType.Comma) || (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon)*/)
             {
                 Errors.Add(new ParserError($"Пропущено ключевое выражение", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 Arg(false);

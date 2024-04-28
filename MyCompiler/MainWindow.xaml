@@ -366,12 +366,18 @@
         <StackPanel x:Name="errorStackPanel" Grid.Row="5" Orientation="Horizontal" Visibility="{Binding IncorrectLexemes.Count, Converter={StaticResource CountToVisibleConverter}}">
             <materialDesign:PackIcon Kind="Error" Margin="5 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFE03D48"/>
             <TextBlock Foreground="White" Text="{Binding IncorrectLexemes.Count}" Margin="5 0 5 0" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16"/>
-            <Button Padding="0" x:Name="magicButton" Command="{Binding RemoveErrorsCommand}" Margin="0" Height="16" BorderBrush="#00481E94" Foreground="#FF1F2DFF" Background="#00E1FFD0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!--<Button Padding="0" x:Name="magicButton" 
+                    Command="{Binding RemoveErrorsCommand}" 
+                    Margin="0" Height="16" 
+                    BorderBrush="#00481E94" 
+                    Foreground="#FF1F2DFF" 
+                    Background="#00E1FFD0" 
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button.ToolTip>
                     <ToolTip Content="Исправить найденные ошибки (F6)" />
                 </Button.ToolTip>
                 <materialDesign:PackIcon Kind="AutoFix" />
-            </Button>
+            </Button>-->
         </StackPanel>
         <StackPanel x:Name="goodStackPanel" Grid.Row="5" Orientation="Horizontal" Visibility="{Binding IncorrectLexemes.Count, Converter={StaticResource CountToHidenConverter}, ConverterParameter=Inverse}">
             <materialDesign:PackIcon Kind="CheckCircle" Margin="5 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FF60C160"/>
