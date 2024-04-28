@@ -14,6 +14,7 @@ public class CompilerViewModel : ViewModelBase
     private bool _isFileModified;
     private LexicalAnalyzer _lexicalAnalyzer;
     private Parser _parser;
+    private string _vmText;
 
 
     private const string _aboutPath = @"Resources\About.html";
@@ -43,6 +44,7 @@ public class CompilerViewModel : ViewModelBase
     private RelayCommand _methodOfAnalysisCommand;
     private RelayCommand _viewSourceCodeCommand;
     private RelayCommand _removeErrorsCommand;
+    private RelayCommand _RPNConvertCommand;
 
     public event EventHandler<MessageEventArgs> StringSent;
     public event EventHandler RequestClose;
@@ -54,7 +56,6 @@ public class CompilerViewModel : ViewModelBase
     private ObservableCollection<ParserError> _incorrectLexemes;
     private Lexeme _selectedLexeme;
     private ParserError _selectedError;
-
     
 
     public ObservableCollection<Lexeme> Lexemes
@@ -132,6 +133,15 @@ public class CompilerViewModel : ViewModelBase
         }
     }
 
+    public string VMText
+    {
+        get { return _vmText; }
+        set
+        {
+            _vmText = value;
+            OnPropertyChanged(nameof(VMText));
+        }
+    }
     public string WindowTitle
     {
         get => $"MyCompiler — {((CurrentFilePath == string.Empty) ? "Новый файл.txt" : "")}{_currentFilePath.Split(@"\").Last()}{(IsFileModified ? "*" : "")} {((CurrentFilePath != string.Empty) ? "(" : "")}{_currentFilePath}{((CurrentFilePath != string.Empty) ? ")" : "")}";
@@ -190,7 +200,10 @@ public class CompilerViewModel : ViewModelBase
     {
         get => _removeErrorsCommand ??= new RelayCommand(RemoveErrors);
     }
-
+    public RelayCommand RPNConvertCommand
+    {
+        get => _RPNConvertCommand ??= new RelayCommand(RPNConvert);
+    }
 
 
 
@@ -370,5 +383,17 @@ public class CompilerViewModel : ViewModelBase
         Lexemes = new ObservableCollection<Lexeme>(_lexemesList);
         IncorrectLexemes = new ObservableCollection<ParserError>(_parser.Parse(_lexemesList));
     }
-
+    public void RPNConvert(object obj)
+    {
+        try
+        {
+            RPNConverter polishNotationCalculator = new(_fileContent.Replace("\n", "").Replace("\r", "").Replace(" ", ""));
+            VMText = $"Исходное арифметическое выражение:\n{polishNotationCalculator.input}\n" +
+                $"\nВыражение в ПОЛИЗ:\n{string.Join(" ", polishNotationCalculator.ConvertToRPN())}";
+        }
+        catch (Exception ex)
+        {
+            VMText = ex.Message;
+        }
+    }
 }

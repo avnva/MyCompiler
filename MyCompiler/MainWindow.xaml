@@ -202,6 +202,11 @@
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="AboutCircle" />
                 </Button>
+                <Separator/>
+                <Button Grid.Column="0" Grid.Row="0" Margin="2" 
+                        Padding="5" Command="{Binding RPNConvertCommand}" 
+                        Foreground="White" 
+                        Content="ПОЛИЗ"/>
             </ToolBar>
         </ToolBarTray>
 
@@ -361,6 +366,11 @@
                                     DisplayIndex="4"/>
                     </DataGrid.Columns>
                 </DataGrid>
+            </TabItem>
+            <TabItem Header="Вывод" ToolTip="Вывод текста" VerticalAlignment="Stretch">
+                <ScrollViewer>
+                    <TextBlock x:Name="outputTextBlock" Foreground="White" Margin="5" TextWrapping="WrapWithOverflow" Background="Black" FontSize="16" Padding="0" Text="{Binding VMText}"/>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
         <StackPanel x:Name="errorStackPanel" Grid.Row="5" Orientation="Horizontal" Visibility="{Binding IncorrectLexemes.Count, Converter={StaticResource CountToVisibleConverter}}">
