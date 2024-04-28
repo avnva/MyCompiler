@@ -77,7 +77,7 @@ public class RPNConverter
                         // Проверяем, что предыдущая лексема была операндом или закрывающей скобкой
                         if (!prevOperand)
                             throw new ArgumentException($"Неверный формат выражения: ожидался операнд. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex}  символы");
-
+                        
                         while (stack.Count > 0 && Precedence(stack.Peek()) >= Precedence(lexeme.Value))
                         {
                             output.Add(stack.Pop());
