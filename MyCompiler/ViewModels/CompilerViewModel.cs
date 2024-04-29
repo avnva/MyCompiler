@@ -25,6 +25,8 @@ public class CompilerViewModel : ViewModelBase
     private const string _methodAnalysisPath = @"Resources\MethodOfAnalysis.html";
     private const string _neutralizingErrorsPath = @"Resources\NeutralizingErrors.html";
     private const string _taskSettingPath = @"Resources\ProblemStatement.html";
+    private const string _correctTestCasePath = @"Resources\correct_test_case.txt";
+    private const string _wrongTestCasePath = @"Resources\wrong_test_case.txt";
     private const string _sourceCode = @"https://github.com/avnva/MyCompiler";
 
 
@@ -56,7 +58,8 @@ public class CompilerViewModel : ViewModelBase
     private ObservableCollection<ParserError> _incorrectLexemes;
     private Lexeme _selectedLexeme;
     private ParserError _selectedError;
-    
+    private RelayCommand _openTestCaseCommand;
+    private RelayCommand _openWrongTestCaseCommand;
 
     public ObservableCollection<Lexeme> Lexemes
     {
@@ -243,6 +246,26 @@ public class CompilerViewModel : ViewModelBase
     public RelayCommand ViewSourceCodeCommand
     {
         get => _viewSourceCodeCommand ??= new RelayCommand(_ => HTMLManager.OpenInBrowser(_sourceCode));
+    }
+    public RelayCommand OpenTestCaseCommand
+    {
+        get => _openTestCaseCommand ??= new RelayCommand(OpenTestCase);
+    }
+
+    public RelayCommand OpenWrongTestCaseCommand
+    {
+        get => _openWrongTestCaseCommand ??= new RelayCommand(OpenWrongTestCase);
+    }
+    public void OpenTestCase(object obj)
+    {
+        CurrentFilePath = _correctTestCasePath;
+        ReadFileContent();
+    }
+
+    public void OpenWrongTestCase(object obj)
+    {
+        CurrentFilePath = _wrongTestCasePath;
+        ReadFileContent();
     }
     public void RemoveErrors(object obj)
     {
