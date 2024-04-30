@@ -4,26 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Грамматика</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Грамматика</h1>
-    <div class="grammar">
-    G[&lt;ЛВ&gt; = &lt;лямбда выражение&gt;]:<br>
-    V<sub>T</sub> = { ‘lambda’, ‘ ‘ }<br>
-    V<sub>N</sub> = { &lt;ЛВ&gt;, Б, <ИД>, <Л>, <ПРОБЕЛ>, <АРГУМ>, <ИМЯАРГУМЕНТА>, <ФУНКЦ>, <ИМЯОПЕРАТОРА1>, <ИМЯОПЕРАТОРА2>, <ИМЯОПЕРАТОРА2ОСТ>}<br>
-    P = {
-    &emsp;1. &lt;ЛВ&gt; → Б<ИД> <br>
-    &emsp;2. <ИД> → Б<ИД>|'='<Л><br>
-    &emsp;3. <Л> → 'lambda'<ПРОБЕЛ><br>
-    &emsp;4. <ПРОБЕЛ> → ' '<АРГУМ> |':'<ФУНКЦ><br>
-    &emsp;5. <АРГУМ> → Б<ИМЯАРГУМЕНТА><br>
-    &emsp;6. <ИМЯАРГУМЕНТА> → Б<ИМЯАРГУМЕНТА> |','<АРГУМ> |':'<ФУНКЦ><br>
-    &emsp;7. <ФУНКЦ> → Б<ИМЯОПЕРАТОРА1><br>
-    &emsp;8. <ИМЯОПЕРАТОРА1> → Б<ИМЯОПЕРАТОРА1> |(+|-|*|/)<ИМЯОПЕРАТОРА2><br>
-    &emsp;9. <ИМЯОПЕРАТОРА2> → Б<ИМЯОПЕРАТОРА2ОСТ><br>
-    &emsp;10. <ИМЯОПЕРАТОРА2ОСТ> → Б<ИМЯОПЕРАТОРА2ОСТ> |';'<br>
-    }
-    </div>
+    <p>Определим грамматику лямбда-выражения формата «sum = lambda a,b:a+b;» языка Python G[&lt;ЛВ&gt;] в нотации Хомского с продукциями P:</p>
+    <p>G[&lt;ЛВ&gt; = &lt;лямбда выражение&gt;]:</p>
+    <pre>
+        P = {
+            1. &lt;ЛВ&gt; → Б&lt;ИД&gt;
+            2. &lt;ИД&gt; → Б | Ц &lt;ИД&gt; | '=' &lt;Л&gt;
+            3. &lt;Л&gt; → 'lambda' &lt;ПРОБЕЛ&gt;
+            4. &lt;ПРОБЕЛ&gt; → ' ' &lt;АРГУМ&gt; | ':' &lt;ФУНКЦ&gt;
+            5. &lt;АРГУМ&gt; → Б&lt;ИМЯАРГУМЕНТА&gt;
+            6. &lt;ИМЯАРГУМЕНТА&gt; → Б | Ц &lt;ИМЯАРГУМЕНТА&gt; | ',' &lt;АРГУМ&gt; | ':' &lt;ФУНКЦ&gt;
+            7. &lt;ФУНКЦ&gt; → Б&lt;ИМЯОПЕРАТОРА1&gt;
+            8. &lt;ИМЯОПЕРАТОРА1&gt; → Б | Ц&lt;ИМЯОПЕРАТОРА1&gt; | (+|-|*|/) &lt;ИМЯОПЕРАТОРА2&gt;
+            9. &lt;ИМЯОПЕРАТОРА2&gt; → Б&lt;ИМЯОПЕРАТОРА2ОСТ&gt;
+            10. &lt;ИМЯОПЕРАТОРА2ОСТ&gt; → Б | Ц&lt;ИМЯОПЕРАТОРА2ОСТ&gt; | ';'
+            11. &lt;Б&gt; → 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+            12. &lt;Ц&gt; → ‘0’ | ‘1’ | … | ‘9’
+        </pre>
+    <p>Следуя введенному формальному определению грамматики, представим G[&lt;ЛВ&gt;] ее составляющими:</p>
+    <pre>
+        &lt;ЛВ&gt; = &lt;лямбда-выражение&gt;;
+        VT = {'lambda', ' ', '=', ',', ':', '+', '-', '*', '/', ';'}
+        VN = {'&lt;ЛВ&gt;', '&lt;ИД&gt;', '&lt;Л&gt;', '&lt;ПРОБЕЛ&gt;', '&lt;АРГУМ&gt;', '&lt;ИМЯАРГУМЕНТА&gt;', '&lt;ФУНКЦ&gt;', '&lt;ИМЯОПЕРАТОРА1&gt;', '&lt;ИМЯОПЕРАТОРА2&gt;', '&lt;ИМЯОПЕРАТОРА2ОСТ&gt;'}
+    </pre>
+    <p>Для обработки арифметических выражений мной была сформулирована следующая грамматика, которая уже не является автоматной:</p>
+    <pre>
+        1. &lt;Expression&gt; → &lt;Additive&gt; ';'
+        2. &lt;Additive&gt; → &lt;Multiplicative&gt; {('+' | '-') &lt;Multiplicative&gt;}
+        3. &lt;Multiplicative&gt; → &lt;Primary&gt; {('*' | '/') &lt;Primary&gt;}
+        4. &lt;Primary&gt; → '(' &lt;Expression&gt; ')' | &lt;Number&gt; | &lt;Identifier&gt; | '-' &lt;Primary&gt;
+        5. &lt;Number&gt; → &lt;Integer&gt; | &lt;Float&gt;
+        6. &lt;Integer&gt; → &lt;Digit&gt; {&lt;Digit&gt;}
+        7. &lt;Float&gt; → &lt;Integer&gt; '.' &lt;Integer&gt;
+        8. &lt;Identifier&gt; → &lt;Letter&gt; {&lt;LetterOrDigit&gt;}
+        9. &lt;Letter&gt; → 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
+        10. &lt;LetterOrDigit&gt; → &lt;Letter&gt; | &lt;Digit&gt;
+        11. &lt;Digit&gt; → '0' | '1' | ... | '9'
+    </pre>
 </body>
 </html>
