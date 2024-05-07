@@ -3,46 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Грамматика</title>
+    <title>Грамматика Лямбда-выражения Python в нотации Хомского</title>
 </head>
 <body>
-    <h1>Грамматика</h1>
-    <p>Определим грамматику лямбда-выражения формата «sum = lambda a,b:a+b;» языка Python G[&lt;ЛВ&gt;] в нотации Хомского с продукциями P:</p>
-    <p>G[&lt;ЛВ&gt; = &lt;лямбда выражение&gt;]:</p>
+    <h1>Грамматика Лямбда-выражения Python</h1>
+    <p>Определим грамматику лямбда-выражения формата «имя_функции = lambda [параметры] : инструкция;» языка Python G[&lt;LF&gt;] в нотации Хомского с продукциями P:</p>
     <pre>
+        G[&lt;LF&gt; = &lt;lambda function&gt;]:
         P = {
-            1. &lt;ЛВ&gt; → Б&lt;ИД&gt;
-            2. &lt;ИД&gt; → Б | Ц &lt;ИД&gt; | '=' &lt;Л&gt;
-            3. &lt;Л&gt; → 'lambda' &lt;ПРОБЕЛ&gt;
-            4. &lt;ПРОБЕЛ&gt; → ' ' &lt;АРГУМ&gt; | ':' &lt;ФУНКЦ&gt;
-            5. &lt;АРГУМ&gt; → Б&lt;ИМЯАРГУМЕНТА&gt;
-            6. &lt;ИМЯАРГУМЕНТА&gt; → Б | Ц &lt;ИМЯАРГУМЕНТА&gt; | ',' &lt;АРГУМ&gt; | ':' &lt;ФУНКЦ&gt;
-            7. &lt;ФУНКЦ&gt; → Б&lt;ИМЯОПЕРАТОРА1&gt;
-            8. &lt;ИМЯОПЕРАТОРА1&gt; → Б | Ц&lt;ИМЯОПЕРАТОРА1&gt; | (+|-|*|/) &lt;ИМЯОПЕРАТОРА2&gt;
-            9. &lt;ИМЯОПЕРАТОРА2&gt; → Б&lt;ИМЯОПЕРАТОРА2ОСТ&gt;
-            10. &lt;ИМЯОПЕРАТОРА2ОСТ&gt; → Б | Ц&lt;ИМЯОПЕРАТОРА2ОСТ&gt; | ';'
-            11. &lt;Б&gt; → 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
-            12. &lt;Ц&gt; → ‘0’ | ‘1’ | … | ‘9’
-        </pre>
-    <p>Следуя введенному формальному определению грамматики, представим G[&lt;ЛВ&gt;] ее составляющими:</p>
-    <pre>
-        &lt;ЛВ&gt; = &lt;лямбда-выражение&gt;;
-        VT = {'lambda', ' ', '=', ',', ':', '+', '-', '*', '/', ';'}
-        VN = {'&lt;ЛВ&gt;', '&lt;ИД&gt;', '&lt;Л&gt;', '&lt;ПРОБЕЛ&gt;', '&lt;АРГУМ&gt;', '&lt;ИМЯАРГУМЕНТА&gt;', '&lt;ФУНКЦ&gt;', '&lt;ИМЯОПЕРАТОРА1&gt;', '&lt;ИМЯОПЕРАТОРА2&gt;', '&lt;ИМЯОПЕРАТОРА2ОСТ&gt;'}
+        1. &lt;LF&gt; -&gt; Б&lt;ID&gt;&lt;ASSIGN&gt;
+        2. &lt;ASSIGN&gt; -&gt; '='&lt;LAMBDA&gt;
+        3. &lt;LAMBDA&gt; -&gt; 'lambda'&lt;ARG&gt;|'lambda'&lt;FUNC&gt;
+        4. &lt;ARG&gt; -&gt; Б&lt;ID&gt;&lt;FUNC&gt;|Б&lt;ID&gt;&lt;ENUM&gt;
+        5. &lt;ENUM&gt; -&gt; ','&lt;ARG&gt;
+        6. &lt;FUNC&gt; -&gt; ':'&lt;EXPRESSION&gt;
+        7. &lt;EXPRESSION&gt; -&gt; &lt;ADDITIVE&gt;';'
+        8. &lt;ADDITIVE&gt; -&gt; &lt;MULTIPLICATIVE&gt;&lt;ADD&gt;
+        9. &lt;ADD&gt; -&gt; '+'&lt;MULTIPLICATIVE&gt;&lt;ADD&gt;|'-'&lt;MULTIPLICATIVE&gt;&lt;ADD&gt;
+        10. &lt;MULTIPLICATIVE&gt; -&gt; &lt;PRIMARY&gt;&lt;M&gt;
+        11. &lt;M&gt; -&gt; '*&lt;PRIMARY&gt;&lt;M&gt;|'/'&lt;PRIMARY&gt;&lt;M&gt;
+        12. &lt;PRIMARY&gt; -&gt; '('&lt;EXPRESSION&gt;')'|&lt;NUMBER&gt;|Б&lt;ID&gt;|'-'&lt;PRIMARY&gt;
+        13. &lt;NUMBER&gt; -&gt; &lt;INT&gt;|&lt;FLOAT&gt;
+        14. &lt;INT&gt; -&gt; Ц&lt;INT&gt;
+        15. &lt;FLOAT&gt; -&gt; &lt;INT&gt;'.'&lt;INT&gt;
+        16. &lt;ID&gt; -&gt; Б&lt;ID&gt;|Ц&lt;ID&gt;|'_'&lt;ID&gt;
+        17. Б -&gt; 'a'|'b'|...|'z'|'A'|'B'|...|'Z'
+        18. Ц -&gt; '1'|...|'9'
+        }
     </pre>
-    <p>Для обработки арифметических выражений мной была сформулирована следующая грамматика, которая уже не является автоматной:</p>
+    <p>Следуя введенному формальному определению грамматики, представим G[&lt;LF&gt;] ее составляющими:</p>
     <pre>
-        1. &lt;Expression&gt; → &lt;Additive&gt; ';'
-        2. &lt;Additive&gt; → &lt;Multiplicative&gt; {('+' | '-') &lt;Multiplicative&gt;}
-        3. &lt;Multiplicative&gt; → &lt;Primary&gt; {('*' | '/') &lt;Primary&gt;}
-        4. &lt;Primary&gt; → '(' &lt;Expression&gt; ')' | &lt;Number&gt; | &lt;Identifier&gt; | '-' &lt;Primary&gt;
-        5. &lt;Number&gt; → &lt;Integer&gt; | &lt;Float&gt;
-        6. &lt;Integer&gt; → &lt;Digit&gt; {&lt;Digit&gt;}
-        7. &lt;Float&gt; → &lt;Integer&gt; '.' &lt;Integer&gt;
-        8. &lt;Identifier&gt; → &lt;Letter&gt; {&lt;LetterOrDigit&gt;}
-        9. &lt;Letter&gt; → 'a' | 'b' | ... | 'z' | 'A' | 'B' | ... | 'Z'
-        10. &lt;LetterOrDigit&gt; → &lt;Letter&gt; | &lt;Digit&gt;
-        11. &lt;Digit&gt; → '0' | '1' | ... | '9'
+        &lt;LF&gt; = &lt;lambda function&gt;;
+        VT = {’lambda’, ’=’, ’,’, ’:’, ’+’, ’-’, ’*’, ’/’, ’;’, ‘a’…’z’, ‘A’…’Z’, ‘0’…’9’}
+        VN = {&lt;LF&gt;, &lt;ID&gt;, &lt;ASSIGN&gt;, &lt;LAMBDA&gt;, &lt;ARG&gt;, &lt;ENUM&gt;, &lt; FUNC&gt;, 
+        &lt;EXPRESSION&gt;, &lt;ADDITIVE&gt;, &lt;ADD&gt;, &lt;MULTIPLICATIVE&gt;, &lt;M&gt;, &lt;PRIMARY&gt;, 
+        &lt;NUMBER&gt;, &lt;INT&gt;, &lt;FLOAT&gt;}
     </pre>
 </body>
 </html>

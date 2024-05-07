@@ -162,7 +162,7 @@ public class Parser
                 ChangeCurrentToken();
                 Arg(true);
             }
-            else if (GetNextType() == LexemeType.Colon)
+            else
             {
                 StartFunction(true);
             }
@@ -197,7 +197,7 @@ public class Parser
 
         if (CurrToken.Type == LexemeType.Colon)
         {
-            Expression(true, true);
+            Expression(true, true, false);
         }
         else
         {
@@ -205,10 +205,17 @@ public class Parser
                 CurrToken.Type == LexemeType.Identifier ||
                 CurrToken.Type == LexemeType.Integer ||
                 CurrToken.Type == LexemeType.Float ||
-                CurrToken.Type == LexemeType.Minus)
+                CurrToken.Type == LexemeType.Minus ||
+                CurrToken.Type == LexemeType.Plus ||
+                CurrToken.Type == LexemeType.Multiply ||
+                CurrToken.Type == LexemeType.Divide ||
+                CurrToken.Type == LexemeType.CloseBracket)
             {
                 Errors.Add(new ParserError($"Пропущено двоеточие", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
-                Expression(false, true);
+                if (CurrToken.Type == LexemeType.OpenBracket)
+                    Expression(false, false, false);
+                else
+                    Expression(false, true, false);
             }
             else
             {
@@ -217,89 +224,122 @@ public class Parser
                 if (GetNextType() == LexemeType.Colon)
                     StartFunction(true);
                 else
-                    Expression(true, true);
+                    Expression(true, true, false);
             }
         }
     }
 
-    private void Expression(bool get, bool neutralize)
+    private void Expression(bool get, bool neutralize, bool bracket)
     {
         if (get) ChangeCurrentToken();
 
-        Additive(false);
+        Additive(false, bracket);
         if (neutralize)
             End(false);
-        // Проверяем, если выражение не закончено, генерируем ошибку
-        //if (CurrToken.Type != LexemeType.Semicolon && CanGetNext())
-        //{
-        //    Errors.Add(new ParserError($"Выражение незакончено", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
-        //}
     }
 
     
-    private void Additive(bool get, bool neutralize = false)
+    private void Additive(bool get, bool bracket)
     {
         if (get) ChangeCurrentToken();
 
-        // Разбор первичного выражения
-        Multiplicative(false);
+        Multiplicative(false, bracket);
 
         // Проверка на наличие дополнительных операций сложения и вычитания
         while (CurrToken.Type == LexemeType.Plus || CurrToken.Type == LexemeType.Minus)
         {
-            Multiplicative(true);
+            if (CanGetNext() && (GetNextType() == LexemeType.CloseBracket || GetNextType() == LexemeType.Semicolon))
+                Errors.Add(new ParserError($"Пропущено число или идентификатор!!", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            Multiplicative(true, bracket);
+   
         }
     }
 
-    private void Multiplicative(bool get, bool neutralize = false)
+    private void Multiplicative(bool get, bool bracket)
     {
         if (get) ChangeCurrentToken();
 
-        // Разбор первичного выражения
-        Primary(false);
+        Primary(false, bracket);
 
         // Проверка на наличие дополнительных операций умножения и деления
         while (CurrToken.Type == LexemeType.Multiply || CurrToken.Type == LexemeType.Divide)
         {
-            Primary(true);
+            if (CanGetNext() && (GetNextType() == LexemeType.CloseBracket || GetNextType() == LexemeType.Semicolon))
+                Errors.Add(new ParserError($"Пропущено число или идентификатор!!", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            Primary(true, bracket);
         }
     }
 
-    private void Primary(bool get, bool neutralize = false)
+    private void Primary(bool get, bool bracket)
     {
         if (get) ChangeCurrentToken();
 
         if (CurrToken.Type == LexemeType.OpenBracket)
         {
             // Если текущий токен - открывающая скобка, вызываем Expression для разбора выражения в скобках
-            Expression(true, false);
+            Expression(true, false, true);
             if (CurrToken.Type != LexemeType.CloseBracket)
             {
                 Errors.Add(new ParserError($"Ожидалась закрывающая скобка", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
             }
             ChangeCurrentToken();
+            if (CurrToken.Type != LexemeType.Semicolon)
+            {
+                if (CurrToken.Type != LexemeType.Plus && CurrToken.Type != LexemeType.Minus &&
+                            CurrToken.Type != LexemeType.Multiply && CurrToken.Type != LexemeType.Divide)
+                {
+                    Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                    Expression(false, false, false);
+                }
+            }
         }
         
         else if (CurrToken.Type == LexemeType.Integer || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Identifier)
         {
-            // Если текущий токен - число или идентификатор, просто переходим к следующему токену
-            if (CanGetNext() && GetNextType() != LexemeType.Plus && GetNextType() != LexemeType.Minus &&
-                                GetNextType() != LexemeType.Multiply && GetNextType() != LexemeType.Divide &&
-                                GetNextType() != LexemeType.Semicolon && GetNextType() != LexemeType.CloseBracket)
+            if (CanGetNext() && GetNextType() == LexemeType.CloseBracket)
             {
-                
-                ChangeCurrentToken();
-                Errors.Add(new ParserError($"Ожидался арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                if (!bracket)
+                    Primary(true, bracket);
             }
-            ChangeCurrentToken();
+            else if (CanGetNext() && GetNextType() != LexemeType.Plus && GetNextType() != LexemeType.Minus &&
+                                GetNextType() != LexemeType.Multiply && GetNextType() != LexemeType.Divide && GetNextType() != LexemeType.Semicolon)
+            {
+                ChangeCurrentToken();
+                Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                if (GetNextType() != LexemeType.Semicolon)
+                    Expression(false, false, false);
+                //Primary(false, false);
+            }
+
+            if (CurrToken.Type != LexemeType.Semicolon)
+                ChangeCurrentToken();
         }
         else if (CurrToken.Type == LexemeType.Minus)
         {
-            Primary(true); // Разбираем выражение после унарного минуса
+            Primary(true, bracket); // Разбираем выражение после унарного минуса
+        }
+        else if (CurrToken.Type == LexemeType.CloseBracket)
+        {
+            if (!bracket)
+            {
+                Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                if (CanGetNext() && GetNextType() != LexemeType.Semicolon)
+                    Primary(true, false);
+            }
+            else
+            {
+                int prevInd = CurrIndex-1;
+                if (tokens[prevInd].Type == LexemeType.OpenBracket)
+                    Errors.Add(new ParserError($"Ожидалось выражение в скобках", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            }
+        }
+        else if (CurrToken.Type == LexemeType.Semicolon)
+        {
+
         }
         else
         {
-            Errors.Add(new ParserError($"Ожидалось число, идентификатор или открывающая скобка", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            Errors.Add(new ParserError($"Пропущено число или идентификатор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
         }
     }
 
@@ -313,7 +353,7 @@ public class Parser
         }
         else
         {
-            if (CurrToken.Type == LexemeType.Identifier || GetNextType() == LexemeType.InvalidCharacter)
+            if (CurrToken.Type == LexemeType.Identifier  || GetNextType() == LexemeType.InvalidCharacter)
             {
                 Errors.Add(new ParserError($"Пропущен оператор конца выражения", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 if (GetNextType() != LexemeType.InvalidCharacter)

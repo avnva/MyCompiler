@@ -1,1 +1,1 @@
-!sum  lambda a,:a+;
+!sum  lambda a,:a;
