@@ -81,7 +81,7 @@ public class Parser
         }
         else
         {
-            if (CurrToken.Type == LexemeType.AssignmentOperator && GetNextType() == LexemeType.Lambda)
+            if (CurrToken.Type == LexemeType.AssignmentOperator)
             {
                 Errors.Add(new ParserError($"Пропущен идентификатор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 Assignment(false);
@@ -94,6 +94,7 @@ public class Parser
                     LF(true);
                 else
                     Assignment(true);
+
             }
         }
     }
@@ -134,7 +135,7 @@ public class Parser
         }
         else
         {
-            if (CurrToken.Type == LexemeType.Identifier /*&& GetNextType() == LexemeType.Comma) || (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon)*/)
+            if ((CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Comma) || (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon))
             {
                 Errors.Add(new ParserError($"Пропущено ключевое выражение", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 Arg(false);
@@ -161,6 +162,12 @@ public class Parser
             {
                 ChangeCurrentToken();
                 Arg(true);
+            }
+            else if (GetNextType()== LexemeType.Identifier)
+            {
+                ChangeCurrentToken();
+                Errors.Add(new ParserError($"Пропущена запятая между аргументами", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                Arg(false);
             }
             else
             {
@@ -323,8 +330,9 @@ public class Parser
             if (!bracket)
             {
                 Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
-                if (CanGetNext() && GetNextType() != LexemeType.Semicolon)
-                    Primary(true, false);
+                ChangeCurrentToken();
+                if (CurrToken.Type != LexemeType.Semicolon)
+                    Primary(false, false);
             }
             else
             {

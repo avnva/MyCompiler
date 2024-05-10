@@ -11,10 +11,10 @@
     <pre>
         G[&lt;LF&gt; = &lt;lambda function&gt;]:
         P = {
-        1. &lt;LF&gt; -&gt; Б&lt;ID&gt;&lt;ASSIGN&gt;
+        1. &lt;LF&gt; -&gt; letter&lt;ID&gt;&lt;ASSIGN&gt;
         2. &lt;ASSIGN&gt; -&gt; '='&lt;LAMBDA&gt;
-        3. &lt;LAMBDA&gt; -&gt; 'lambda'&lt;ARG&gt;|'lambda'&lt;FUNC&gt;
-        4. &lt;ARG&gt; -&gt; Б&lt;ID&gt;&lt;FUNC&gt;|Б&lt;ID&gt;&lt;ENUM&gt;
+        3. &lt;LAMBDA&gt; -&gt; 'lambda'&lt;ARG&gt;
+        4. &lt;ARG&gt; -&gt; letter&lt;ID&gt;&lt;FUNC&gt;|letter&lt;ID&gt;&lt;ENUM&gt;
         5. &lt;ENUM&gt; -&gt; ','&lt;ARG&gt;
         6. &lt;FUNC&gt; -&gt; ':'&lt;EXPRESSION&gt;
         7. &lt;EXPRESSION&gt; -&gt; &lt;ADDITIVE&gt;';'
@@ -22,13 +22,13 @@
         9. &lt;ADD&gt; -&gt; '+'&lt;MULTIPLICATIVE&gt;&lt;ADD&gt;|'-'&lt;MULTIPLICATIVE&gt;&lt;ADD&gt;
         10. &lt;MULTIPLICATIVE&gt; -&gt; &lt;PRIMARY&gt;&lt;M&gt;
         11. &lt;M&gt; -&gt; '*&lt;PRIMARY&gt;&lt;M&gt;|'/'&lt;PRIMARY&gt;&lt;M&gt;
-        12. &lt;PRIMARY&gt; -&gt; '('&lt;EXPRESSION&gt;')'|&lt;NUMBER&gt;|Б&lt;ID&gt;|'-'&lt;PRIMARY&gt;
+        12. &lt;PRIMARY&gt; -&gt; '('&lt;EXPRESSION&gt;')'|&lt;NUMBER&gt;|letter&lt;ID&gt;|'-'&lt;PRIMARY&gt;
         13. &lt;NUMBER&gt; -&gt; &lt;INT&gt;|&lt;FLOAT&gt;
-        14. &lt;INT&gt; -&gt; Ц&lt;INT&gt;
+        14. &lt;INT&gt; -&gt; digit&lt;INT&gt;
         15. &lt;FLOAT&gt; -&gt; &lt;INT&gt;'.'&lt;INT&gt;
-        16. &lt;ID&gt; -&gt; Б&lt;ID&gt;|Ц&lt;ID&gt;|'_'&lt;ID&gt;
-        17. Б -&gt; 'a'|'b'|...|'z'|'A'|'B'|...|'Z'
-        18. Ц -&gt; '1'|...|'9'
+        16. &lt;ID&gt; -&gt; letter&lt;ID&gt;|digit&lt;ID&gt;|'_'&lt;ID&gt;
+        17. letter -&gt; 'a'|'b'|...|'z'|'A'|'B'|...|'Z'
+        18. digit -&gt; '1'|...|'9'
         }
     </pre>
     <p>Следуя введенному формальному определению грамматики, представим G[&lt;LF&gt;] ее составляющими:</p>

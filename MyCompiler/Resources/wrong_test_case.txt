@@ -1,1 +1,1 @@
-!sum  lambda a,:a;
+sum! = lambd a,b:a+b));
