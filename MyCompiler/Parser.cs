@@ -289,16 +289,20 @@ public class Parser
             {
                 Errors.Add(new ParserError($"Ожидалась закрывающая скобка", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
             }
-            ChangeCurrentToken();
-            if (CurrToken.Type != LexemeType.Semicolon)
+            else
             {
-                if (CurrToken.Type != LexemeType.Plus && CurrToken.Type != LexemeType.Minus &&
-                            CurrToken.Type != LexemeType.Multiply && CurrToken.Type != LexemeType.Divide)
+                ChangeCurrentToken();
+                if (CurrToken.Type != LexemeType.Semicolon)
                 {
-                    Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
-                    Expression(false, false, false);
+                    if (CurrToken.Type == LexemeType.Identifier || CurrToken.Type == LexemeType.Integer ||
+                                CurrToken.Type == LexemeType.Float)
+                    {
+                        Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                        Expression(false, false, false);
+                    }
                 }
             }
+
         }
         
         else if (CurrToken.Type == LexemeType.Integer || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Identifier)
@@ -309,12 +313,12 @@ public class Parser
                     Primary(true, bracket);
             }
             else if (CanGetNext() && GetNextType() != LexemeType.Plus && GetNextType() != LexemeType.Minus &&
-                                GetNextType() != LexemeType.Multiply && GetNextType() != LexemeType.Divide && GetNextType() != LexemeType.Semicolon)
+                       GetNextType() != LexemeType.Multiply && GetNextType() != LexemeType.Divide && GetNextType() != LexemeType.Semicolon)
             {
                 ChangeCurrentToken();
                 Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 if (GetNextType() != LexemeType.Semicolon)
-                    Expression(false, false, false);
+                    Expression(false, false, bracket);
                 //Primary(false, false);
             }
 
@@ -332,7 +336,14 @@ public class Parser
                 Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 ChangeCurrentToken();
                 if (CurrToken.Type != LexemeType.Semicolon)
-                    Primary(false, false);
+                    if (CurrToken.Type == LexemeType.Plus || CurrToken.Type == LexemeType.Minus || CurrToken.Type == LexemeType.Multiply || CurrToken.Type == LexemeType.Divide)
+                    {
+                        Primary(true, false);
+                    }
+                    else
+                    {
+                        Primary(false, false);
+                    }
             }
             else
             {
