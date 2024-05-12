@@ -135,9 +135,9 @@ public class RPNConverter
                     outputExpr.Add(stack.Pop());
                 }
             if (exceptionFlag)
-                return string.Join("", output);
+                return string.Join("",$"Ошибка:\n{string.Join("", output)}");
             else
-                return string.Join(" ", outputExpr);
+                return string.Join("", $"Выражение в ПОЛИЗ:\n{string.Join(" ", outputExpr)}");
         }
         catch (Exception ex)
         {
