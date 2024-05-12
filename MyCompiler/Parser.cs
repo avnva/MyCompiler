@@ -135,7 +135,7 @@ public class Parser
         }
         else
         {
-            if ((CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Comma) || (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon))
+            if (CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Comma || CurrToken.Type == LexemeType.Identifier && GetNextType() == LexemeType.Colon)
             {
                 Errors.Add(new ParserError($"Пропущено ключевое выражение", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 Arg(false);
@@ -158,12 +158,12 @@ public class Parser
 
         if (CurrToken.Type == LexemeType.Identifier)
         {
-            if(GetNextType() == LexemeType.Comma)
+            if (GetNextType() == LexemeType.Comma)
             {
                 ChangeCurrentToken();
                 Arg(true);
             }
-            else if (GetNextType()== LexemeType.Identifier)
+            else if (GetNextType() == LexemeType.Identifier)
             {
                 ChangeCurrentToken();
                 Errors.Add(new ParserError($"Пропущена запятая между аргументами", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
@@ -245,7 +245,7 @@ public class Parser
             End(false);
     }
 
-    
+
     private void Additive(bool get, bool bracket)
     {
         if (get) ChangeCurrentToken();
@@ -258,7 +258,7 @@ public class Parser
             if (CanGetNext() && (GetNextType() == LexemeType.CloseBracket || GetNextType() == LexemeType.Semicolon))
                 Errors.Add(new ParserError($"Пропущено число или идентификатор!!", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
             Multiplicative(true, bracket);
-   
+
         }
     }
 
@@ -304,7 +304,7 @@ public class Parser
             }
 
         }
-        
+
         else if (CurrToken.Type == LexemeType.Integer || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Identifier)
         {
             if (CanGetNext() && GetNextType() == LexemeType.CloseBracket)
@@ -347,7 +347,7 @@ public class Parser
             }
             else
             {
-                int prevInd = CurrIndex-1;
+                int prevInd = CurrIndex - 1;
                 if (tokens[prevInd].Type == LexemeType.OpenBracket)
                     Errors.Add(new ParserError($"Ожидалось выражение в скобках", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
             }
@@ -372,7 +372,7 @@ public class Parser
         }
         else
         {
-            if (CurrToken.Type == LexemeType.Identifier  || GetNextType() == LexemeType.InvalidCharacter)
+            if (CurrToken.Type == LexemeType.Identifier || GetNextType() == LexemeType.InvalidCharacter)
             {
                 Errors.Add(new ParserError($"Пропущен оператор конца выражения", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 if (GetNextType() != LexemeType.InvalidCharacter)

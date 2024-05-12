@@ -125,6 +125,16 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Background="DimGray" Header="Лабы">
+                <MenuItem Background="DimGray" Foreground="White" Header="РВ время" Command="{Binding Reg1Command}">
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="РВ телефонный номер" Command="{Binding Reg2Command}">
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="РВ пароль" Command="{Binding Reg3Command}">
+                </MenuItem>
+                <MenuItem Background="DimGray" Foreground="White" Header="Рекурсивный спуск" Command="{Binding ParseAOCommand}">
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
         <ToolBarTray Background="DimGray" Grid.Row="1">

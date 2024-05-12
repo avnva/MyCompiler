@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace MyCompiler;
@@ -15,6 +16,7 @@ public class CompilerViewModel : ViewModelBase
     private LexicalAnalyzer _lexicalAnalyzer;
     private Parser _parser;
     private string _vmText;
+    private AssignmentOperatorParser _aOParser;
 
 
     private const string _aboutPath = @"Resources\About.html";
@@ -60,6 +62,10 @@ public class CompilerViewModel : ViewModelBase
     private ParserError _selectedError;
     private RelayCommand _openTestCaseCommand;
     private RelayCommand _openWrongTestCaseCommand;
+    private RelayCommand _reg1Command;
+    private RelayCommand _reg2Command;
+    private RelayCommand _reg3Command;
+    private RelayCommand _parseAOCommand;
 
     public ObservableCollection<Lexeme> Lexemes
     {
@@ -160,6 +166,7 @@ public class CompilerViewModel : ViewModelBase
         _fileContent = string.Empty;
         CurrentFilePath = string.Empty;
         IsFileModified = false;
+        _aOParser = new AssignmentOperatorParser();
     }
 
     public RelayCommand CreateNewFileCommand
@@ -255,6 +262,57 @@ public class CompilerViewModel : ViewModelBase
     public RelayCommand OpenWrongTestCaseCommand
     {
         get => _openWrongTestCaseCommand ??= new RelayCommand(OpenWrongTestCase);
+    }
+    public RelayCommand Reg1Command
+    {
+        get => _reg1Command ??= new RelayCommand(FindReg1);
+    }
+
+    public RelayCommand Reg2Command
+    {
+        get => _reg2Command ??= new RelayCommand(FindReg2);
+    }
+
+    public RelayCommand Reg3Command
+    {
+        get => _reg3Command ??= new RelayCommand(FindReg3);
+    }
+    public RelayCommand ParseAOCommand
+    {
+        get => _parseAOCommand ??= new RelayCommand(ParseAO);
+    }
+    public void ParseAO(object obj)
+    {
+        VMText = _aOParser.Parse(_lexicalAnalyzer.Analyze(_fileContent));
+    }
+    public void FindReg1(object obj)
+    {
+        PrintRegResult(RegEx.ValidateTime(_fileContent));
+    }
+
+    public void FindReg2(object obj)
+    {
+        PrintRegResult(RegEx.ValidatePhoneNumber(_fileContent));
+    }
+
+    public void FindReg3(object obj)
+    {
+        PrintRegResult(RegEx.ValidatePassword(_fileContent));
+    }
+
+    private void PrintRegResult(List<Match> matches)
+    {
+        VMText = "";
+        bool flag = false;
+        foreach (Match match in matches)
+        {
+            flag = true;
+            VMText += $"Найдено: '{match.Value}', позиция: {match.Index}\n";
+        }
+        if (!flag)
+        {
+            VMText += $"Ничего не найдено";
+        }
     }
     public void OpenTestCase(object obj)
     {
