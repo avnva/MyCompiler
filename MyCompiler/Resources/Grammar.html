@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Грамматика Лямбда-выражения Python в нотации Хомского</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>Грамматика Лямбда-выражения Python</h1>
-    <p>Определим грамматику лямбда-выражения формата «имя_функции = lambda [параметры] : инструкция;» языка Python G[&lt;LF&gt;] в нотации Хомского с продукциями P:</p>
+    <p>Определим грамматику лямбда-выражения формата «имя_функции = lambda [параметры] : инструкция;» языка Python G[<LF>] в нотации Хомского с продукциями P:</p>
     <pre>
         G[&lt;LF&gt; = &lt;lambda function&gt;]:
         P = {
@@ -31,7 +45,7 @@
         18. digit -&gt; '1'|...|'9'
         }
     </pre>
-    <p>Следуя введенному формальному определению грамматики, представим G[&lt;LF&gt;] ее составляющими:</p>
+    <p>Следуя введенному формальному определению грамматики, представим G[<LF>] ее составляющими:</p>
     <pre>
         &lt;LF&gt; = &lt;lambda function&gt;;
         VT = {’lambda’, ’=’, ’,’, ’:’, ’+’, ’-’, ’*’, ’/’, ’;’, ‘a’…’z’, ‘A’…’Z’, ‘0’…’9’}

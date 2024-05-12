@@ -126,13 +126,30 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Background="DimGray" Header="Лабы">
+                <MenuItem Background="DimGray" Foreground="White" Header="ПОЛИЗ" Command="{Binding RPNConvertCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Play"/>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Background="DimGray" Foreground="White" Header="РВ время" Command="{Binding Reg1Command}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Play"/>
+                    </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Background="DimGray" Foreground="White" Header="РВ телефонный номер" Command="{Binding Reg2Command}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Play"/>
+                    </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Background="DimGray" Foreground="White" Header="РВ пароль" Command="{Binding Reg3Command}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Play"/>
+                    </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Background="DimGray" Foreground="White" Header="Рекурсивный спуск" Command="{Binding ParseAOCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Play"/>
+                    </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -212,11 +229,6 @@
                     </Button.ToolTip>
                     <materialDesign:PackIcon Kind="AboutCircle" />
                 </Button>
-                <Separator/>
-                <Button Grid.Column="0" Grid.Row="0" Margin="2" 
-                        Padding="5" Command="{Binding RPNConvertCommand}" 
-                        Foreground="White" 
-                        Content="ПОЛИЗ"/>
             </ToolBar>
         </ToolBarTray>
 

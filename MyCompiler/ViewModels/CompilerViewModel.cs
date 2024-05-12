@@ -469,7 +469,8 @@ public class CompilerViewModel : ViewModelBase
         try
         {
             RPNConverter polishNotationCalculator = new(_fileContent.Replace("\n", "").Replace("\r", "").Replace(" ", ""));
-            VMText = $"Исходное арифметическое выражение:\n{polishNotationCalculator.input}\n" +
+            var input = polishNotationCalculator.GetExpression();
+            VMText = $"Исходное арифметическое выражение:\n{input}\n" +
                 string.Join(" ", polishNotationCalculator.ConvertToRPN());
         }
         catch (Exception ex)

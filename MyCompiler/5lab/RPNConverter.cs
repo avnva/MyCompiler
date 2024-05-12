@@ -15,15 +15,42 @@ public class RPNConverter
         lexicalAnalyzer = new LexicalAnalyzer();
         input = _input;
     }
+    public string GetExpression()
+    {
+        if (input == null)
+            throw new ArgumentNullException(nameof(input), "Входная строка не может быть null.");
+        if (string.IsNullOrWhiteSpace(input))
+            throw new ArgumentException("Входная строка не может быть пустой или содержать только пробельные символы.");
+
+        var lexemes = lexicalAnalyzer.Analyze(input);
+        var expressionLexemes = new List<string>();
+        bool foundColon = false;
+
+        foreach (var lexeme in lexemes)
+        {
+            if (foundColon && lexeme.Type != LexemeType.Semicolon)
+            {
+                expressionLexemes.Add(lexeme.Value);
+            }
+            else if (lexeme.Type == LexemeType.Colon)
+            {
+                foundColon = true;
+            }
+        }
+        input = string.Join(" ", expressionLexemes);
+        return input;
+    }
+
+
 
     public string ConvertToRPN()
     {
         try
         {
             if (input == null)
-                throw new ArgumentNullException(nameof(input), "Входная строка не может быть null.");
+                throw new ArgumentNullException(nameof(input), "Арифметическое выражение не определено");
             if (string.IsNullOrWhiteSpace(input))
-                throw new ArgumentException("Входная строка не может быть пустой или содержать только пробельные символы.");
+                throw new ArgumentException("Арифметическое выражение не определено");
 
             var lexemes = lexicalAnalyzer.Analyze(input);
             var output = new List<string>();
