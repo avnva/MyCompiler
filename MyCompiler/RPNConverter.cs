@@ -10,13 +10,10 @@ public class RPNConverter
 {
     private readonly LexicalAnalyzer lexicalAnalyzer;
     public string input { get; private set; }
-    //public string postfixExpr { get; private set; }
     public RPNConverter(string _input)
     {
         lexicalAnalyzer = new LexicalAnalyzer();
         input = _input;
-        //infixExpr = expression;
-        //postfixExpr = ToPostfix(infixExpr + "\r");
     }
 
     public string ConvertToRPN()
@@ -30,10 +27,11 @@ public class RPNConverter
 
             var lexemes = lexicalAnalyzer.Analyze(input);
             var output = new List<string>();
+            var outputExpr = new List<string>();
             var stack = new Stack<string>();
 
-            // Флаг, указывающий на то, что предыдущая лексема была операндом
             bool prevOperand = false;
+            bool exceptionFlag = false;
 
             foreach (var lexeme in lexemes)
             {
@@ -44,30 +42,37 @@ public class RPNConverter
                     case LexemeType.Identifier:
                         // Проверяем, что предыдущая лексема была оператором или открывающей скобкой
                         if (prevOperand)
-                            throw new ArgumentException($"Неверный формат выражения: ожидался оператор. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex} символы");
-
-                        output.Add(lexeme.Value);
+                        {
+                            output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Неверный формат выражения - ожидался оператор\n");
+                            exceptionFlag = true;
+                        }
+                        outputExpr.Add(lexeme.Value);
                         prevOperand = true;
                         break;
                     case LexemeType.OpenBracket:
-                        // Проверяем, что предыдущая лексема была оператором или открывающей скобкой
                         if (prevOperand)
-                            throw new ArgumentException($"Неверный формат выражения: ожидался оператор. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex} символы");
-
+                        {
+                            output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Неверный формат выражения - ожидался оператор\n");
+                            exceptionFlag = true;
+                        }
                         stack.Push(lexeme.Value);
                         prevOperand = false;
                         break;
                     case LexemeType.CloseBracket:
-                        // Проверяем, что предыдущая лексема была операндом или закрывающей скобкой
                         if (!prevOperand)
-                            throw new ArgumentException($"Неверный формат выражения: ожидался операнд. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex} символы");
-
+                        {
+                            output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Неверный формат выражения - ожидалось число или идентификатор\n");
+                            exceptionFlag = true;
+                        }
                         while (stack.Count > 0 && stack.Peek() != "(")
                         {
-                            output.Add(stack.Pop());
+                            outputExpr.Add(stack.Pop());
                         }
                         if (stack.Count == 0)
-                            throw new ArgumentException($"Несогласованные скобки. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex} символы");
+                        {
+                            output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Несогласованные скобки\n");
+                            exceptionFlag = true;
+                        }
                         stack.Pop(); // Удаляем открывающую скобку из стека
                         prevOperand = true;
                         break;
@@ -76,11 +81,14 @@ public class RPNConverter
                     case LexemeType.Divide:
                         // Проверяем, что предыдущая лексема была операндом или закрывающей скобкой
                         if (!prevOperand)
-                            throw new ArgumentException($"Неверный формат выражения: ожидался операнд. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex}  символы");
-                        
+                        {
+                            output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Неверный формат выражения - ожидалось число или идентификатор\n");
+                            exceptionFlag = true;
+                        }
+
                         while (stack.Count > 0 && Precedence(stack.Peek()) >= Precedence(lexeme.Value))
                         {
-                            output.Add(stack.Pop());
+                            outputExpr.Add(stack.Pop());
                         }
                         stack.Push(lexeme.Value);
                         prevOperand = false;
@@ -90,36 +98,46 @@ public class RPNConverter
                         if (!prevOperand && (output.Count == 0 || output[output.Count - 1] == "("))
                         {
                             // Унарный минус
-                            stack.Push("~"); // Используем символ "~" для обозначения унарного минуса
+                            stack.Push("~");
                         }
                         else
                         {
                             // Бинарный минус
                             while (stack.Count > 0 && Precedence(stack.Peek()) >= Precedence(lexeme.Value))
                             {
-                                output.Add(stack.Pop());
+                                outputExpr.Add(stack.Pop());
                             }
                             stack.Push(lexeme.Value);
                         }
                         prevOperand = false;
                         break;
                     default:
-                        throw new ArgumentException($"Недопустимый символ. \nМестоположение: с {lexeme.StartIndex} по {lexeme.EndIndex}  символы");
+                        output.Add($"{lexeme.StartIndex} - {lexeme.EndIndex} символы: Недопустимый символ\n");
+                        exceptionFlag = true;
+                        break;
                 }
             }
 
             // Проверяем, что последняя лексема была операндом или закрывающей скобкой
             if (!prevOperand)
-                throw new ArgumentException($"Неверный формат выражения: ожидался операнд. \nМестоположение: с {lexemes[^1].StartIndex} по {lexemes[^1].EndIndex} символы");
-
-            while (stack.Count > 0)
             {
-                if (stack.Peek() == "(")
-                    throw new ArgumentException($"Несогласованные скобки. \nМестоположение: с {lexemes[^1].StartIndex} по {lexemes[^1].EndIndex}  символы");
-                output.Add(stack.Pop());
+                output.Add($"{lexemes[^1].StartIndex} - {lexemes[^1].EndIndex} символы: Неверный формат выражения - ожидалось число или идентификатор\n");
+                exceptionFlag = true;
             }
 
-            return string.Join(" ", output);
+            while (stack.Count > 0)
+                {
+                    if (stack.Peek() == "(")
+                    {
+                        output.Add($"{lexemes[^1].StartIndex} - {lexemes[^1].EndIndex} символы: Несогласованные скобки\n");
+                        exceptionFlag = true;
+                    }
+                    outputExpr.Add(stack.Pop());
+                }
+            if (exceptionFlag)
+                return string.Join("", output);
+            else
+                return string.Join(" ", outputExpr);
         }
         catch (Exception ex)
         {
