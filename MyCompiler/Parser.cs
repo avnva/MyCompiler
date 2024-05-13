@@ -10,6 +10,7 @@ public class Parser
     private int CurrIndex;
     private int MaxIndex;
 
+    int bracketCounter = 0;
     public List<ParserError> Errors { get; set; }
 
     public Parser()
@@ -74,6 +75,7 @@ public class Parser
     private void LF(bool get, bool neutralize = false)
     {
         if (get) ChangeCurrentToken();
+        bracketCounter = 0;
 
         if (CurrToken.Type == LexemeType.Identifier)
         {
@@ -235,11 +237,10 @@ public class Parser
             }
         }
     }
-
+    
     private void Expression(bool get, bool neutralize, bool bracket)
     {
         if (get) ChangeCurrentToken();
-
         Additive(false, bracket);
         if (neutralize)
             End(false);
@@ -276,13 +277,13 @@ public class Parser
             Primary(true, bracket);
         }
     }
-
     private void Primary(bool get, bool bracket)
     {
         if (get) ChangeCurrentToken();
-
+        
         if (CurrToken.Type == LexemeType.OpenBracket)
         {
+            bracketCounter++;
             // Если текущий токен - открывающая скобка, вызываем Expression для разбора выражения в скобках
             Expression(true, false, true);
             if (CurrToken.Type != LexemeType.CloseBracket)
@@ -292,17 +293,42 @@ public class Parser
             else
             {
                 ChangeCurrentToken();
+                bracketCounter--;
+            }
+
+            if (bracketCounter == 0)
+            {
+                if (CurrToken.Type == LexemeType.CloseBracket)
+                {
+                    while (CurrToken.Type == LexemeType.CloseBracket)
+                    {
+                        Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                        ChangeCurrentToken();
+                    }
+                }
                 if (CurrToken.Type != LexemeType.Semicolon)
                 {
                     if (CurrToken.Type == LexemeType.Identifier || CurrToken.Type == LexemeType.Integer ||
-                                CurrToken.Type == LexemeType.Float)
+                                CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.OpenBracket)
                     {
                         Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                         Expression(false, false, false);
                     }
                 }
             }
-
+            //else
+            //{
+            //    ChangeCurrentToken();
+            //    if (CurrToken.Type != LexemeType.Semicolon)
+            //    {
+            //        if (CurrToken.Type == LexemeType.Identifier || CurrToken.Type == LexemeType.Integer ||
+            //                    CurrToken.Type == LexemeType.Float)
+            //        {
+            //            Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            //            Expression(false, false, false);
+            //        }
+            //    }
+            //}
         }
 
         else if (CurrToken.Type == LexemeType.Integer || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Identifier)
@@ -331,19 +357,29 @@ public class Parser
         }
         else if (CurrToken.Type == LexemeType.CloseBracket)
         {
-            if (!bracket)
+            bracketCounter--;
+            if (bracketCounter < 0)
             {
                 Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
                 ChangeCurrentToken();
+                bracketCounter++;
                 if (CurrToken.Type != LexemeType.Semicolon)
+                {
                     if (CurrToken.Type == LexemeType.Plus || CurrToken.Type == LexemeType.Minus || CurrToken.Type == LexemeType.Multiply || CurrToken.Type == LexemeType.Divide)
                     {
                         Primary(true, false);
+                    }
+                    else if (CurrToken.Type == LexemeType.Identifier || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Integer || CurrToken.Type == LexemeType.OpenBracket)
+                    {
+                        Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+                        Expression(false, false, false);
                     }
                     else
                     {
                         Primary(false, false);
                     }
+                }
+                    
             }
             else
             {
@@ -351,6 +387,28 @@ public class Parser
                 if (tokens[prevInd].Type == LexemeType.OpenBracket)
                     Errors.Add(new ParserError($"Ожидалось выражение в скобках", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
             }
+
+
+            //if (!bracket)
+            //{
+            //    Errors.Add(new ParserError($"Несоответствие скобок", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            //    ChangeCurrentToken();
+            //    if (CurrToken.Type != LexemeType.Semicolon)
+            //        if (CurrToken.Type == LexemeType.Plus || CurrToken.Type == LexemeType.Minus || CurrToken.Type == LexemeType.Multiply || CurrToken.Type == LexemeType.Divide)
+            //        {
+            //            Expression(true, false, false);
+            //        }
+            //        else if (CurrToken.Type == LexemeType.Identifier || CurrToken.Type == LexemeType.Float || CurrToken.Type == LexemeType.Integer)
+            //        {
+            //            Errors.Add(new ParserError($"Пропущен арифметический оператор", CurrToken.StartIndex, tokens[MaxIndex].EndIndex, ErrorType.UnfinishedExpression));
+            //            Expression(false, false, false);
+            //        }
+            //        //else if (CurrToken.Type == LexemeType.CloseBracket)
+            //        //{
+            //        //    Expression(false, false, false);
+            //        //}
+            //}
+
         }
         else if (CurrToken.Type == LexemeType.Semicolon)
         {
